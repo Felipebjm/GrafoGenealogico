@@ -1,6 +1,6 @@
 # Grafo Genealogico
 
-## Grafo implementado mediante una aplicación de árbol genealógico en c#
+## Grafo implementado mediante una aplicación de árbol genealógico en C#
 - Integrantes: Felipe Bejarano, Daniel Vargas y  Christian Vargas
 
 ## Características
