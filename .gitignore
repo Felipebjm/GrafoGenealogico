@@ -1,0 +1,38 @@
+# Compilados
+bin/
+obj/
+out/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Paquetes
+packages/
+**/packages/*
+!**/packages/build/
+!**/packages/repositories.config
+
+# Residuos comunes
+*.log
+*.cache
+*.tmp
+*.ldb
+
+# Test results
+TestResult*/
+TestResults/
+
+# Publicaciones
+app.publish/
+
+# Rider/JetBrains
+.idea/
+*.iml
+
+# Otros
+*.ncrunchsolution
+*.ncrunchproject
