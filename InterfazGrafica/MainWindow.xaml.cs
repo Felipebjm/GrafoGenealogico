@@ -19,6 +19,24 @@ namespace InterfazGrafica
         public MainWindow()
         {
             InitializeComponent();
+
+            // Al iniciar, mostramos la pantalla de agregar familiar
+            MainContent.Content = new Vistas.AgregarFamiliarControl();
+        }
+
+        private void BtnAgregar_Click(object sender, RoutedEventArgs e)
+        {
+            MainContent.Content = new Vistas.AgregarFamiliarControl();
+        }
+
+        private void BtnMapa_Click(object sender, RoutedEventArgs e)
+        {
+            MainContent.Content = new Vistas.MapaControl();
+        }
+
+        private void BtnEstadisticas_Click(object sender, RoutedEventArgs e)
+        {
+            MainContent.Content = new Vistas.EstadisticasControl();
         }
     }
 }
