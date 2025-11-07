@@ -34,7 +34,7 @@
                 <TextBlock Text="Nombre:"/>
                 <TextBox x:Name="TxtNombre" Margin="0,0,0,8"/>
 
-                <!-- Cédula -->
+                <!-- Cedula -->
                 <TextBlock Text="Cédula:"/>
                 <TextBox x:Name="TxtCedula" Margin="0,0,0,8"/>
 
@@ -78,6 +78,19 @@
                         Margin="0,15,0,0"
                         Width="150"
                         Click="BtnGuardar_Click"/>
+                
+                <!-- Relaciones -->
+                <TextBlock Text="Conectar con otro familiar:" FontWeight="Bold" Margin="0,15,0,5"/>
+                <ComboBox x:Name="CmbFamiliares"
+                          DisplayMemberPath="Nombre"
+                          SelectedValuePath="Id"
+                          Width="200"
+                          Margin="0,0,0,5" />
+
+                <Button Content="Conectar familiar"
+                        Width="150"
+                        Click="BtnConectar_Click"/>
+
             </StackPanel>
 
             <!-- PANEL DERECHO: foto / info extra -->

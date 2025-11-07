@@ -21,8 +21,9 @@ namespace InterfazGrafica.Vistas
     /// </summary>
     public partial class AgregarFamiliarControl : UserControl
     {
-        // Más adelante podés recibir el grafo por constructor
+        // Mas adelante hay que pasar el grafo por parametro
         // private GrafoFamilia _grafo;
+
 
         public AgregarFamiliarControl()
         {
@@ -31,21 +32,26 @@ namespace InterfazGrafica.Vistas
 
         private void BtnElegirPosicion_Click(object sender, RoutedEventArgs e)
         {
-            // Aquí abrirías la ventana "SeleccionarPosicionWindow"
+            // Aqui se va a abrir un mapa donde el usuario escoje la posicion"
             // y cuando el usuario haga clic, te devuelve X/Y
-            // y vos las ponés en TxtX.Text y TxtY.Text
+            // esto es para ponerlo en TxtX.Text y TxtY.Text
         }
 
         private void BtnSeleccionarFoto_Click(object sender, RoutedEventArgs e)
         {
-            // Aquí abrís un OpenFileDialog y cargas la imagen en ImgFoto.Source
+            // Esto va a ser para abrir un OpenFileDialog y cargar la imagen en ImgFoto.Source
         }
 
         private void BtnGuardar_Click(object sender, RoutedEventArgs e)
         {
-            // Aquí leés todos los campos,
-            // creás un objeto Familiar y se lo pasás al grafo
-            // (esto lo haremos cuando tengamos el proyecto Core referenciado)
+            // Aqui se leen todos los campos,
+            // Secrea un objeto Familiar y se le pasa al grafo (cuando exista)
+           
+        }
+
+        private void BtnConectar_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
