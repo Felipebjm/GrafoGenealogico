@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Árbol genealógico" Height="600" Width="950">
     <Grid>
-        <!-- Se definen 2 filas: header y contenido -->
+        <!-- Se definen 2 filas: header arriba y contenido abajo -->
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <!-- header -->
@@ -11,24 +11,22 @@
             <!-- resto -->
         </Grid.RowDefinitions>
 
-        <!-- Se define 2 columnas en la fila de contenido: menu y contenido -->
+        <!-- Se defiden 2 columnas en la fila de abajo: menu y contenido -->
         <Grid.ColumnDefinitions>
-            <!-- esto aplica a toda la ventana, pero se usa solo en la fila 1 -->
-            <!-- menu lateral -->
+            <!-- Menu lateral -->
             <ColumnDefinition Width="200"/>
             <!--Contenido-->
-            <ColumnDefinition Width="31*"/>
-            <ColumnDefinition Width="19*"/>
-            
+            <ColumnDefinition Width="*"/>
+
         </Grid.ColumnDefinitions>
 
         <!-- HEADER -->
-        <Border Grid.Row="0" Grid.ColumnSpan="3" Background="#1F2937">
+        <Border Grid.Row="0" Grid.ColumnSpan="2" Background="#1F2937">
             <!-- DockPanel con el textbox -->
             <DockPanel Margin="10,0">
                 <TextBlock Text="Árbol genealógico"
                            Foreground="White"
-                           FontSize="18"
+                           FontSize="24"
                            VerticalAlignment="Center"
                            FontWeight="Bold"/>
             </DockPanel>
@@ -36,7 +34,8 @@
 
         <!-- MENU LATERAL -->
         <StackPanel Grid.Row="1" Grid.Column="0" Background="#F3F4F6">
-            <TextBlock Text="Menú" Margin="10" FontWeight="Bold"/>
+            <TextBlock Text="Menú" Margin="10" FontWeight="Bold" FontSize="16"/>
+            <TextBlock Text="Selecciona una opción" Margin="10" FontWeight="Bold" FontSize="14"/>
 
             <Button x:Name="BtnAgregar"
                     Content="Agregar familiar"
@@ -57,7 +56,8 @@
                     Click="BtnEstadisticas_Click"/>
         </StackPanel>
 
-        <!-- ÁREA DE CONTENIDO -->
+        <!-- AREA DE CONTENIDO -->
+        <!-- Se usa para cargar los diferentes user controls -->
         <ContentControl x:Name="MainContent"
                         Grid.Row="1"
                         Grid.Column="1"
