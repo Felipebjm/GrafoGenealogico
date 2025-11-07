@@ -1,13 +1,67 @@
 ﻿<Window x:Class="InterfazGrafica.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:InterfazGrafica"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Árbol genealógico" Height="600" Width="950">
     <Grid>
-        <TextBlock HorizontalAlignment="Left" Margin="336,160,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="75" Width="281" FontSize="22" FontFamily="Impact"><Run Language="es-cr" Text="Prueba"/></TextBlock>
+        <!-- Se definen 2 filas: header arriba y contenido abajo -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <!-- header -->
+            <RowDefinition Height="*"/>
+            <!-- resto -->
+        </Grid.RowDefinitions>
 
+        <!-- Se defiden 2 columnas en la fila de abajo: menu y contenido -->
+        <Grid.ColumnDefinitions>
+            <!-- Menu lateral -->
+            <ColumnDefinition Width="200"/>
+            <!--Contenido-->
+            <ColumnDefinition Width="*"/>
+
+        </Grid.ColumnDefinitions>
+
+        <!-- HEADER -->
+        <Border Grid.Row="0" Grid.ColumnSpan="2" Background="#1F2937">
+            <!-- DockPanel con el textbox -->
+            <DockPanel Margin="10,0">
+                <TextBlock Text="Árbol genealógico"
+                           Foreground="White"
+                           FontSize="24"
+                           VerticalAlignment="Center"
+                           FontWeight="Bold"/>
+            </DockPanel>
+        </Border>
+
+        <!-- MENU LATERAL -->
+        <StackPanel Grid.Row="1" Grid.Column="0" Background="#F3F4F6">
+            <TextBlock Text="Menú" Margin="10" FontWeight="Bold" FontSize="16"/>
+            <TextBlock Text="Selecciona una opción" Margin="10" FontWeight="Bold" FontSize="14"/>
+
+            <Button x:Name="BtnAgregar"
+                    Content="Agregar familiar"
+                    Margin="10,5"
+                    Padding="5"
+                    Click="BtnAgregar_Click"/>
+
+            <Button x:Name="BtnMapa"
+                    Content="Mapa"
+                    Margin="10,5"
+                    Padding="5"
+                    Click="BtnMapa_Click"/>
+
+            <Button x:Name="BtnEstadisticas"
+                    Content="Estadísticas"
+                    Margin="10,5"
+                    Padding="5"
+                    Click="BtnEstadisticas_Click"/>
+        </StackPanel>
+
+        <!-- AREA DE CONTENIDO -->
+        <!-- Se usa para cargar los diferentes user controls -->
+        <ContentControl x:Name="MainContent"
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="10,10,10,10" Grid.ColumnSpan="2"/>
     </Grid>
 </Window>
+
