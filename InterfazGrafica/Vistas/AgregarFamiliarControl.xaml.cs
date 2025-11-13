@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -24,6 +25,9 @@ namespace InterfazGrafica.Vistas
         // Mas adelante hay que pasar el grafo por parametro
         // private GrafoFamilia _grafo;
 
+        private string _rutaFotoSeleccionada;
+        public string RutaFotoSeleccionada => _rutaFotoSeleccionada;
+
 
         public AgregarFamiliarControl()
         {
@@ -40,12 +44,38 @@ namespace InterfazGrafica.Vistas
         private void BtnSeleccionarFoto_Click(object sender, RoutedEventArgs e)
         {
             // Esto va a ser para abrir un OpenFileDialog y cargar la imagen en ImgFoto.Source
+            // Crear y configurar el OpenFileDialog
+            var OpenFileDialog = new OpenFileDialog
+            {
+                Title = "Seleccionar foto",
+                Filter = "Imágenes (*.jpg;*.jpeg;*.png;*.bmp;*.gif)|*.jpg;*.jpeg;*.png;*.bmp;*.gif"
+
+            };
+
+            bool? result = OpenFileDialog.ShowDialog();
+
+            if (result == true)
+            {
+                //Guarda la ruta de la foto seleccionada
+                _rutaFotoSeleccionada = OpenFileDialog.FileName;
+
+                //Cargar la imagen en el control ImgFoto
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(_rutaFotoSeleccionada);
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.EndInit();
+
+                ImgFoto.Source = bitmap;
+
+
+            }
         }
 
         private void BtnGuardar_Click(object sender, RoutedEventArgs e)
         {
             // Aqui se leen todos los campos,
-            // Secrea un objeto Familiar y se le pasa al grafo (cuando exista)
+            // Se crea un objeto Familiar y se le pasa al grafo (cuando exista)
            
         }
 
