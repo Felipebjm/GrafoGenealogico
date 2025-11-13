@@ -9,7 +9,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Recursos\MapaMundo.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Clases\Clases.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Recursos\MapaMundo.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

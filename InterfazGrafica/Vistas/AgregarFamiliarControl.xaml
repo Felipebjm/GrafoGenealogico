@@ -31,34 +31,34 @@
             <!-- FORMULARIO -->
             <StackPanel Grid.Column="0" Margin="0,0,20,0">
                 <!-- Nombre -->
-                <TextBlock Text="Nombre:"/>
+                <TextBlock Text="Nombre:" FontSize="14" FontWeight="Bold"/>
                 <TextBox x:Name="TxtNombre" Margin="-115,0,0,8" Width="294"/>
 
                 <!-- Cédula -->
-                <TextBlock Text="Cédula:"/>
+                <TextBlock Text="Cédula:" FontSize="14" FontWeight="Bold"/>
                 <TextBox x:Name="TxtCedula" Margin="-258,0,0,8" Width="154"/>
 
                 <!-- Fecha de nacimiento -->
-                <TextBlock Text="Fecha de nacimiento:"/>
-                <DatePicker x:Name="DpFechaNacimiento" Margin="0,0,0,8"/>
+                <TextBlock Text="Fecha de nacimiento:" FontSize="14" FontWeight="Bold"/>
+                <DatePicker x:Name="DpFechaNacimiento" Margin="-205,0,0,8" Width="208"/>
 
                 <!-- ¿Está vivo? / Fallecido -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                     <CheckBox x:Name="ChkNoEstaVivo"
-                              Content="Ya no está con nosotros"
+                              Content="Ya no está con nosotros?"
                               Checked="ChkNoEstaVivo_Checked"
-                              Unchecked="ChkNoEstaVivo_Unchecked"/>
+                              Unchecked="ChkNoEstaVivo_Unchecked" FontSize="14" FontWeight="Bold"/>
                 </StackPanel>
 
                 <TextBlock Text="Si tu familiar ya no está con nosotros, marca la casilla y escribe el año en que falleció."
                            FontSize="10"
-                           Foreground="Gray"
+                           Foreground="Black"
                            TextWrapping="Wrap"
-                           Margin="0,0,0,4"/>
+                           Margin="0,0,0,4" FontWeight="Bold" FontStyle="Italic"/>
 
                 <!-- Año de fallecimiento (deshabilitado por default) -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                    <TextBlock Text="Año de fallecimiento:" VerticalAlignment="Center"/>
+                    <TextBlock Text="Año de fallecimiento:" VerticalAlignment="Center" FontWeight="Bold"/>
                     <TextBox x:Name="TxtAnoFallecimiento"
                              Width="80"
                              Margin="5,0,0,0"
