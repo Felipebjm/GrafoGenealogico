@@ -3,6 +3,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Árbol genealógico" Height="600" Width="950">
     <Grid>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FF8293A5" Offset="0.881"/>
+                <GradientStop Color="#FF006CE4" Offset="0"/>
+            </LinearGradientBrush>
+        </Grid.Background>
         <!-- Se definen 2 filas: header arriba y contenido abajo -->
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
@@ -33,27 +39,33 @@
         </Border>
 
         <!-- MENU LATERAL -->
-        <StackPanel Grid.Row="1" Grid.Column="0" Background="#F3F4F6">
-            <TextBlock Text="Menú" Margin="10" FontWeight="Bold" FontSize="16"/>
-            <TextBlock Text="Selecciona una opción" Margin="10" FontWeight="Bold" FontSize="14"/>
+        <StackPanel Grid.Row="1" Grid.Column="0">
+            <StackPanel.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#FF5C94D2" Offset="0.377"/>
+                    <GradientStop Color="#FFB3CBE6" Offset="0.516"/>
+                </LinearGradientBrush>
+            </StackPanel.Background>
+            <TextBlock Text="Menú" Margin="10" FontWeight="Bold" FontSize="22" Height="97"/>
+            <TextBlock Text="Selecciona una opción" Margin="10" FontWeight="Bold" FontSize="16" Height="48"/>
 
             <Button x:Name="BtnAgregar"
                     Content="Agregar familiar"
                     Margin="10,5"
                     Padding="5"
-                    Click="BtnAgregar_Click"/>
+                    Click="BtnAgregar_Click" FontSize="16"/>
 
             <Button x:Name="BtnMapa"
                     Content="Mapa"
                     Margin="10,5"
                     Padding="5"
-                    Click="BtnMapa_Click"/>
+                    Click="BtnMapa_Click" FontSize="16"/>
 
             <Button x:Name="BtnEstadisticas"
                     Content="Estadísticas"
                     Margin="10,5"
                     Padding="5"
-                    Click="BtnEstadisticas_Click"/>
+                    Click="BtnEstadisticas_Click" FontSize="16"/>
         </StackPanel>
 
         <!-- AREA DE CONTENIDO -->

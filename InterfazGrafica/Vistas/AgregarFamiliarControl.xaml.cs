@@ -49,6 +49,16 @@ namespace InterfazGrafica.Vistas
            
         }
 
+        private void ChkNoEstaVivo_Checked(object sender, RoutedEventArgs e)
+        {
+            TxtAnoFallecimiento.IsEnabled = true;
+        }
+
+        private void ChkNoEstaVivo_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TxtAnoFallecimiento.IsEnabled = false;
+            TxtAnoFallecimiento.Text = string.Empty;
+        }
         private void BtnConectar_Click(object sender, RoutedEventArgs e)
         {
 

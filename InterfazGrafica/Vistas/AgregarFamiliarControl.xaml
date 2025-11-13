@@ -31,32 +31,38 @@
             <!-- FORMULARIO -->
             <StackPanel Grid.Column="0" Margin="0,0,20,0">
                 <!-- Nombre -->
-                <TextBlock Text="Nombre:"/>
-                <TextBox x:Name="TxtNombre" Margin="0,0,0,8"/>
+                <TextBlock Text="Nombre:" FontSize="14" FontWeight="Bold"/>
+                <TextBox x:Name="TxtNombre" Margin="-115,0,0,8" Width="294"/>
 
-                <!-- Cedula -->
-                <TextBlock Text="Cédula:"/>
-                <TextBox x:Name="TxtCedula" Margin="0,0,0,8"/>
+                <!-- Cédula -->
+                <TextBlock Text="Cédula:" FontSize="14" FontWeight="Bold"/>
+                <TextBox x:Name="TxtCedula" Margin="-258,0,0,8" Width="154"/>
 
-                <!-- Fecha de nacimiento y edad -->
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                    <StackPanel Width="180">
-                        <TextBlock Text="Fecha de nacimiento:"/>
+                <!-- Fecha de nacimiento -->
+                <TextBlock Text="Fecha de nacimiento:" FontSize="14" FontWeight="Bold"/>
+                <DatePicker x:Name="DpFechaNacimiento" Margin="-205,0,0,8" Width="208"/>
 
-                        <!-- DatePicker para seleccionar fecha -->
-                        <DatePicker x:Name="DpFechaNacimiento"/>
-                    </StackPanel>
-
-                    <StackPanel Margin="10,0,0,0" Width="80">
-                        <TextBlock Text="Edad:"/>
-                        <TextBox x:Name="TxtEdad"/>
-                    </StackPanel>
+                <!-- ¿Está vivo? / Fallecido -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                    <CheckBox x:Name="ChkNoEstaVivo"
+                              Content="Ya no está con nosotros?"
+                              Checked="ChkNoEstaVivo_Checked"
+                              Unchecked="ChkNoEstaVivo_Unchecked" FontSize="14" FontWeight="Bold"/>
                 </StackPanel>
 
-                <!-- ¿Esta vivo? -->
+                <TextBlock Text="Si tu familiar ya no está con nosotros, marca la casilla y escribe el año en que falleció."
+                           FontSize="10"
+                           Foreground="Black"
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,4" FontWeight="Bold" FontStyle="Italic"/>
+
+                <!-- Año de fallecimiento (deshabilitado por default) -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                    <CheckBox x:Name="ChkVivo" IsChecked="True"/>
-                    <TextBlock Text="¿Está vivo?" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="Año de fallecimiento:" VerticalAlignment="Center" FontWeight="Bold"/>
+                    <TextBox x:Name="TxtAnoFallecimiento"
+                             Width="80"
+                             Margin="5,0,0,0"
+                             IsEnabled="False"/>
                 </StackPanel>
 
                 <!-- Ubicacion -->
@@ -67,30 +73,28 @@
                     <TextBlock Text="Y:" VerticalAlignment="Center"/>
                     <TextBox x:Name="TxtY" Width="60" Margin="5,0,0,0" IsReadOnly="True"/>
                 </StackPanel>
-
-                <!-- Boton para elegir posicion en el mapa -->
-                <Button Content="Elegir posición en el mapa" 
+                <Button Content="Elegir posición en el mapa"
                         Width="180"
                         Click="BtnElegirPosicion_Click"/>
 
-                <!-- Boton final -->
-                <Button Content="Agregar familiar"
-                        Margin="0,15,0,0"
-                        Width="150"
-                        Click="BtnGuardar_Click"/>
-                
                 <!-- Relaciones -->
                 <TextBlock Text="Conectar con otro familiar:" FontWeight="Bold" Margin="0,15,0,5"/>
-                <ComboBox x:Name="CmbFamiliares"
-                          DisplayMemberPath="Nombre"
-                          SelectedValuePath="Id"
-                          Width="200"
-                          Margin="0,0,0,5" />
+                <StackPanel Orientation="Horizontal">
+                    <ComboBox x:Name="CmbFamiliares"
+                    DisplayMemberPath="Nombre"
+                    SelectedValuePath="Id"
+                    Width="200"
+                    Margin="0,0,10,0" />
+                    <Button Content="Conectar familiar"
+                     Width="130"
+                    Click="BtnConectar_Click"/>
+                </StackPanel>
 
-                <Button Content="Conectar familiar"
+                <!-- Boton final -->
+                <Button Content="Agregar"
+                        Margin="0,55,0,0"
                         Width="150"
-                        Click="BtnConectar_Click"/>
-
+                        Click="BtnGuardar_Click" Height="26"/>
             </StackPanel>
 
             <!-- PANEL DERECHO: foto / info extra -->

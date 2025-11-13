@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using InterfazGrafica.Vistas;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -42,7 +43,23 @@ namespace InterfazGrafica
         //Boton para ir a la vista de estadisticas
         private void BtnEstadisticas_Click(object sender, RoutedEventArgs e)
         {
-            MainContent.Content = new Vistas.EstadisticasControl();
+            // Crear la vista de estadísticas
+            var statsControl = new EstadisticasControl();
+
+            // DATOS DE PRUEBA (para ver que la ventana funciona)
+            string parCercanoA = "Ana";
+            string parCercanoB = "Juan";
+            string parLejanoA = "Sofía";
+            string parLejanoB = "Pedro";
+            string distanciaPromedio = "345 km";
+
+            // Rellenar los TextBox del UserControl
+            statsControl.SetParCercano(parCercanoA, parCercanoB);
+            statsControl.SetParLejano(parLejanoA, parLejanoB);
+            statsControl.SetDistanciaPromedio(distanciaPromedio);
+
+            // Mostrar la vista de estadísticas en el área principal
+            MainContent.Content = statsControl;
         }
     }
 }

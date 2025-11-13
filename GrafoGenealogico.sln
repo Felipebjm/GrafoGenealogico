@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36616.10 d17.14
+VisualStudioVersion = 17.14.36616.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InterfazGrafica", "InterfazGrafica\InterfazGrafica.csproj", "{5E5FFD4D-8429-492C-986C-DC69D3FE2F5F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clases", "Clases\Clases.csproj", "{2293C857-8B2B-4F4C-AA50-A0DBFFB2E42C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PruebasUnitarias", "PruebasUnitarias\PruebasUnitarias.csproj", "{05E19920-432D-4AC6-90F8-F7259F7CFADC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{2293C857-8B2B-4F4C-AA50-A0DBFFB2E42C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2293C857-8B2B-4F4C-AA50-A0DBFFB2E42C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2293C857-8B2B-4F4C-AA50-A0DBFFB2E42C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05E19920-432D-4AC6-90F8-F7259F7CFADC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05E19920-432D-4AC6-90F8-F7259F7CFADC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05E19920-432D-4AC6-90F8-F7259F7CFADC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05E19920-432D-4AC6-90F8-F7259F7CFADC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
