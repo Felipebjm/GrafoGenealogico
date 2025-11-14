@@ -21,6 +21,7 @@ namespace InterfazGrafica.Vistas
         /// Acción que tu capa superior puede asignar para (re)dibujar nodos/relaciones.
         /// Ahora puede estar null; cuando la asignes, el botón "Refrescar" la invocará.
         /// </summary>
+  
         public Action OnRefresh { get; set; }
 
         public MapaControl()
@@ -49,7 +50,7 @@ namespace InterfazGrafica.Vistas
             }
         }
 
-        
+       
         /// Limpia la capa de dibujo (las lineas, imagenes de personas) sin tocar la imagen de fondo
         public void LimpiarOverlay() => MapaCanvas.Children.Clear();
         
@@ -59,5 +60,9 @@ namespace InterfazGrafica.Vistas
             ImgMapa.Source = new BitmapImage(new Uri(sourceUri, UriKind.RelativeOrAbsolute));
         }
 
+        private void MapaCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
+        }
     }
 }
