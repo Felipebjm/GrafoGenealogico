@@ -112,7 +112,7 @@
                 <TextBlock Text="* La posición se usa para mostrarlo en el mapa."
                            TextWrapping="Wrap"
                            Margin="0,10,0,0"
-                           Foreground="Gray"/>
+                           Foreground="Black" FontStyle="Italic" FontSize="14"/>
             </StackPanel>
         </Grid>
     </Grid>

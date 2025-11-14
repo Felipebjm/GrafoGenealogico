@@ -44,7 +44,8 @@
             <!-- Capa encima para nodos/relaciones -->
             <!-- Capa transparente encima de la imagen de fondo-->
             <!-- Es la capa overlay donde se dibujan los nodos -->
-            <Canvas x:Name="MapaCanvas" Background="Transparent"/>
+            <Canvas x:Name="MapaCanvas" 
+                    Background="Transparent"/>
         </Grid>
     </Grid>
 </UserControl>
