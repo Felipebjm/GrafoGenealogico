@@ -1,0 +1,80 @@
+﻿<UserControl x:Class="InterfazGrafica.Vistas.EstadisticasControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="600">
+    <!-- Contenedor raíz: centra el contenido en ambas direcciones -->
+    <Grid Background="Transparent">
+        <Border Padding="16"
+                Background="#FFFFFF"
+                CornerRadius="8"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center" Height="134" Width="580">
+            <!-- Ancho máximo para que no se estire de más en pantallas grandes -->
+            <Grid MaxWidth="640" Margin="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Fila: Par más cercano -->
+                <Grid Grid.Row="0">
+                    <!-- Truco: SharedSizeGroup alinea columnas entre filas -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="Etiqueta"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="*" SharedSizeGroup="Campo"/>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="*" SharedSizeGroup="Campo"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Par más cercano:" VerticalAlignment="Center" FontSize="16" />
+                    <TextBox x:Name="TxtCercanoA" Grid.Column="2" Margin="0,0,8,0" MinWidth="140" IsReadOnly="True" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="TxtCercanoB" Grid.Column="4" Margin="0,0,0,0" MinWidth="140" IsReadOnly="True"/>
+                </Grid>
+
+                <!-- separador -->
+                <Rectangle Grid.Row="1" Height="1" Fill="#00000015"/>
+
+                <!-- Fila: Par más lejano -->
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="Etiqueta"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="*" SharedSizeGroup="Campo"/>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="*" SharedSizeGroup="Campo"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Par más lejano:" VerticalAlignment="Center" FontSize="16" />
+                    <TextBox x:Name="TxtLejanoA" Grid.Column="2" MinWidth="140" IsReadOnly="True"/>
+                    <TextBox x:Name="TxtLejanoB" Grid.Column="4" MinWidth="140" IsReadOnly="True"/>
+                </Grid>
+
+                <!-- separador -->
+                <Rectangle Grid.Row="3" Height="1" Fill="#00000015"/>
+
+                <!-- Fila: Distancia promedio -->
+                <Grid Grid.Row="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="Etiqueta"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="*" SharedSizeGroup="Campo"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Distancia promedio:" VerticalAlignment="Center" FontSize="16" />
+                    <TextBox x:Name="TxtPromedio" Grid.Column="2" MinWidth="180" IsReadOnly="True"/>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- Activa el dimensionado compartido entre filas -->
+        <Grid.IsSharedSizeScope>True</Grid.IsSharedSizeScope>
+    </Grid>
+</UserControl>
+
