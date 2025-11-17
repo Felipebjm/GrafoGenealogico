@@ -11,10 +11,16 @@
                 Background="#FFFFFF"
                 CornerRadius="8"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Center" Height="134" Width="580">
+                VerticalAlignment="Center" Height="280" Width="580">
             <!-- Ancho máximo para que no se estire de más en pantallas grandes -->
             <Grid MaxWidth="640" Margin="4">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="12"/>
                     <RowDefinition Height="Auto"/>
@@ -69,6 +75,57 @@
 
                     <TextBlock Text="Distancia promedio:" VerticalAlignment="Center" FontSize="16" />
                     <TextBox x:Name="TxtPromedio" Grid.Column="2" MinWidth="180" IsReadOnly="True"/>
+                </Grid>
+
+                <!-- separador -->
+                <Rectangle Grid.Row="5" Height="1" Fill="#00000015"/>
+
+                <!-- Fila: Total de personas -->
+                <Grid Grid.Row="6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="Etiqueta"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="*" SharedSizeGroup="Campo"/>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="*" SharedSizeGroup="Campo"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Total personas:" VerticalAlignment="Center" FontSize="16" />
+                    <TextBox x:Name="TxtTotalPersonas" Grid.Column="2" MinWidth="80" IsReadOnly="True"/>
+                    <TextBox x:Name="TxtVivosYFallecidos" Grid.Column="4" MinWidth="120" IsReadOnly="True"/>
+                </Grid>
+
+                <!-- separador -->
+                <Rectangle Grid.Row="7" Height="1" Fill="#00000015"/>
+
+                <!-- Fila: Edad promedio -->
+                <Grid Grid.Row="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="Etiqueta"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="*" SharedSizeGroup="Campo"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Edad promedio:" VerticalAlignment="Center" FontSize="16" />
+                    <TextBox x:Name="TxtEdadPromedio" Grid.Column="2" MinWidth="180" IsReadOnly="True"/>
+                </Grid>
+
+                <!-- separador -->
+                <Rectangle Grid.Row="9" Height="1" Fill="#00000015"/>
+
+                <!-- Fila: Más joven/Mayor -->
+                <Grid Grid.Row="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="Etiqueta"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="*" SharedSizeGroup="Campo"/>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="*" SharedSizeGroup="Campo"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Edades extremas:" VerticalAlignment="Center" FontSize="16" />
+                    <TextBox x:Name="TxtMasJoven" Grid.Column="2" MinWidth="140" IsReadOnly="True"/>
+                    <TextBox x:Name="TxtMasViejo" Grid.Column="4" MinWidth="140" IsReadOnly="True"/>
                 </Grid>
             </Grid>
         </Border>

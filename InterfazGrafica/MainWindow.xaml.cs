@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Clases;
 
 namespace InterfazGrafica
 {
@@ -17,14 +18,21 @@ namespace InterfazGrafica
     /// </summary>
     public partial class MainWindow : Window
     {
-        //Esto es para crear un nuevo grafo cuando exista la clase grafo
-        //private GrafoFamilia_grafo = new GrafoFamilia();
+        // Sistema de estadísticas de la familia
+        private EstadisticasFamilia _estadisticasFamilia;
+        private EstadisticasControl? _estadisticasControl;
+
         public MainWindow()
         {
             InitializeComponent();
 
+            // Inicializar el sistema de estadísticas
+            _estadisticasFamilia = new EstadisticasFamilia();
+            
+            // Agregar algunos datos de prueba
+            AgregarDatosDePrueba();
+            
             // Al iniciar, se muestra la pantalla de agregar familiar
-            //Recordar pasar el grafo por parametro cuando exista
             MainContent.Content = new Vistas.AgregarFamiliarControl();
         }
 
@@ -43,23 +51,56 @@ namespace InterfazGrafica
         //Boton para ir a la vista de estadisticas
         private void BtnEstadisticas_Click(object sender, RoutedEventArgs e)
         {
-            // Crear la vista de estadísticas
-            var statsControl = new EstadisticasControl();
-
-            // DATOS DE PRUEBA (para ver que la ventana funciona)
-            string parCercanoA = "Ana";
-            string parCercanoB = "Juan";
-            string parLejanoA = "Sofía";
-            string parLejanoB = "Pedro";
-            string distanciaPromedio = "345 km";
-
-            // Rellenar los TextBox del UserControl
-            statsControl.SetParCercano(parCercanoA, parCercanoB);
-            statsControl.SetParLejano(parLejanoA, parLejanoB);
-            statsControl.SetDistanciaPromedio(distanciaPromedio);
+            // Crear la vista de estadísticas con los datos reales
+            _estadisticasControl = new EstadisticasControl(_estadisticasFamilia);
 
             // Mostrar la vista de estadísticas en el área principal
-            MainContent.Content = statsControl;
+            MainContent.Content = _estadisticasControl;
+        }
+
+        /// <summary>
+        /// Método público para agregar una persona desde otros controles
+        /// </summary>
+        public void AgregarPersonaAFamilia(Persona persona)
+        {
+            _estadisticasFamilia.AgregarPersona(persona);
+            
+            // Si las estadísticas están actualmente visibles, actualizarlas
+            if (_estadisticasControl != null && MainContent.Content == _estadisticasControl)
+            {
+                _estadisticasControl.ActualizarEstadisticas();
+            }
+        }
+
+        /// <summary>
+        /// Obtiene la instancia de estadísticas para uso de otros controles
+        /// </summary>
+        public EstadisticasFamilia ObtenerEstadisticasFamilia()
+        {
+            return _estadisticasFamilia;
+        }
+
+        /// <summary>
+        /// Agrega algunos datos de prueba para demostrar el funcionamiento del sistema
+        /// </summary>
+        private void AgregarDatosDePrueba()
+        {
+            // Crear algunas personas de ejemplo
+            var ana = new Persona("Ana", "García", new DateTime(1985, 3, 15), 100, 200);
+            var juan = new Persona("Juan", "Pérez", new DateTime(1982, 7, 22), 150, 180);
+            var sofia = new Persona("Sofía", "López", new DateTime(1990, 11, 8), 300, 400);
+            var pedro = new Persona("Pedro", "Martín", new DateTime(1978, 5, 30), 500, 100);
+            
+            // Agregar una persona fallecida
+            var abuela = new Persona("María", "González", new DateTime(1950, 2, 14), 200, 300);
+            abuela.FechaFallecimiento = new DateTime(2020, 8, 10);
+
+            // Agregar todas las personas al sistema
+            _estadisticasFamilia.AgregarPersona(ana);
+            _estadisticasFamilia.AgregarPersona(juan);
+            _estadisticasFamilia.AgregarPersona(sofia);
+            _estadisticasFamilia.AgregarPersona(pedro);
+            _estadisticasFamilia.AgregarPersona(abuela);
         }
     }
 }

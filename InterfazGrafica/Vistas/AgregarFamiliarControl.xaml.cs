@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32; //Necesario para el OpenFileDialog
+using Clases;
 
 namespace InterfazGrafica.Vistas
 {
@@ -25,8 +26,8 @@ namespace InterfazGrafica.Vistas
         // Mas adelante hay que pasar el grafo por parametro
         // private GrafoFamilia _grafo;
 
-        private string _rutaFotoSeleccionada;
-        public string RutaFotoSeleccionada => _rutaFotoSeleccionada;
+        private string? _rutaFotoSeleccionada;
+        public string? RutaFotoSeleccionada => _rutaFotoSeleccionada;
 
 
         public AgregarFamiliarControl()
@@ -85,9 +86,55 @@ namespace InterfazGrafica.Vistas
 
         private void BtnGuardar_Click(object sender, RoutedEventArgs e)
         {
-            // Aqui se leen todos los campos,
-            // Se crea un objeto Familiar y se le pasa al grafo (cuando exista)
-           
+            try
+            {
+                // Por ahora, crear una persona con datos de ejemplo
+                // hasta que el XAML tenga todos los controles necesarios
+                var nuevaPersona = CrearPersonaDeEjemplo();
+
+                // Obtener la ventana principal y agregar la persona
+                var mainWindow = Window.GetWindow(this) as MainWindow;
+                mainWindow?.AgregarPersonaAFamilia(nuevaPersona);
+
+                // Confirmar al usuario
+                MessageBox.Show($"Persona '{nuevaPersona.NombreCompleto}' agregada exitosamente.\n" +
+                              $"Las estadísticas se han actualizado automáticamente.", 
+                              "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al guardar la persona: {ex.Message}", 
+                              "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Crea una persona de ejemplo (temporal hasta completar la integración con el formulario)
+        /// </summary>
+        private Persona CrearPersonaDeEjemplo()
+        {
+            var nombres = new[] { "Carlos", "María", "José", "Ana", "Luis", "Carmen", "Diego", "Laura" };
+            var apellidos = new[] { "González", "Rodríguez", "García", "López", "Martínez", "Hernández", "Pérez", "Sánchez" };
+            
+            var random = new Random();
+            var nombre = nombres[random.Next(nombres.Length)];
+            var apellido = apellidos[random.Next(apellidos.Length)];
+            
+            var persona = new Persona(
+                nombre, 
+                apellido, 
+                DateTime.Today.AddYears(-random.Next(20, 80)),
+                random.Next(50, 600), 
+                random.Next(50, 400)
+            );
+
+            // Algunas personas podrían estar fallecidas
+            if (random.Next(10) < 2) // 20% de probabilidad
+            {
+                persona.FechaFallecimiento = DateTime.Today.AddYears(-random.Next(1, 10));
+            }
+
+            return persona;
         }
 
         private void ChkNoEstaVivo_Checked(object sender, RoutedEventArgs e)
