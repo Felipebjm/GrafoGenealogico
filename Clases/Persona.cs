@@ -19,11 +19,21 @@ namespace Clases
         // Propiedad calculada: edad en años
         public int Edad => (int)((DateTime.Now - FechaNacimiento).TotalDays / 365.25);
 
-        // Constructor 
+        // Constructor
+
+
         public Persona(string nombre, int cedula, DateTime fechaNacimiento, bool estaVivo,
                        string? rutaFoto = null, double posX = 0, double posY = 0)
         {
-           
+            //Validaciones
+            if(string.IsNullOrWhiteSpace(nombre))
+                throw new ArgumentException("El nombre no puede estar vacío.", nameof(nombre));
+            if (cedula <= 0)
+                throw new ArgumentException("La cédula debe ser un número positivo.", nameof(cedula));
+            if (fechaNacimiento > DateTime.Now)
+                throw new ArgumentException("La fecha de nacimiento no puede ser en el futuro.", nameof(fechaNacimiento));
+
+
             Id = Guid.NewGuid();
             Nombre = nombre;
             Cedula = cedula;

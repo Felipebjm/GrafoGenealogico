@@ -7,24 +7,25 @@ namespace Clases
 {
     public class GrafoPersonas
     {
-        public List<Persona> Personas { get; private set; } = new();
+        public List<Persona> Personas { get; private set; } = new(); // Lista de personas en el grafo
 
-        public Dictionary<Guid, List<Guid>> Adyacencias { get; private set; } = new();
+        // Diccionario de adyacencias (relaciones) entre personas
+        public Dictionary<Guid, List<Guid>> Adyacencias { get; private set; } = new(); 
 
         public void AgregarPersona(Persona persona)
         {
             if (persona == null)
                 throw new ArgumentNullException(nameof(persona));
-            if (Personas.Any(p => p.Cedula == persona.Cedula))
+            if (Personas.Any(p => p.Cedula == persona.Cedula)) // Verificar si la persona ya existe por cedula
             {
-                Console.WriteLine("La persona con cédula " + persona.Cedula + " ya existe en el grafo.");
+                Console.WriteLine("La persona con cedula " + persona.Cedula + " ya existe en el grafo.");
                 return;
             }
 
             Personas.Add(persona); // Agregar la persona al grafo
             if (!Adyacencias.ContainsKey(persona.Id))
             {
-                Adyacencias[persona.Id] = new List<Guid>();
+                Adyacencias[persona.Id] = new List<Guid>(); // Inicializar la lista de adyacencias para la nueva persona
             }
         }
         //Buscar persona por nombre
@@ -42,10 +43,10 @@ namespace Clases
         // Agregar relacion bidireccional entre dos personas
         public void AgregarRelacionBidireccional(Persona p1, Persona p2)
         {
-            if (p1 == null || p2 == null)
+            if (p1 == null || p2 == null) // Validar que las personas no sean nulas
                 return;
-            if (p1.Id == p2.Id)
-                return;            // No permitir relaciones consigo mismo
+            if (p1.Id == p2.Id)  // No permitir relaciones consigo mismo
+                return;            
 
             AgregarRelacion(p1.Id, p2.Id);
             AgregarRelacion(p2.Id, p1.Id);
@@ -134,18 +135,7 @@ namespace Clases
             }
 
         }
-       
-
-
-
-
-
     }
-
-
-
-
-
 }
 
 
