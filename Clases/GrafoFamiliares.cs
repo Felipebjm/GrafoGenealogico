@@ -113,6 +113,159 @@ namespace Clases
             }
         }
 
+        // Calcular la distancia euclidiana entre una persona y sus vecinos
+        // El resultado es una lista de tuplas (Persona vecino, double distancia)
+        public List<(Persona persona, double distancia)> CalcularDistanciasConVecinos(Persona origen)
+        {
+            if (origen == null) // Validar que la persona no sea nula
+                throw new ArgumentNullException(nameof(origen));
+
+            var resultado = new List<(Persona persona, double distancia)>(); // Lista para almacenar los resultados
+
+            // Verificar que la persona tenga lista de adyacencias
+            //Busca en el diccionario el Id de origen y que tenga vecinos
+            if (!Adyacencias.TryGetValue(origen.Id, out var vecinosIds) || vecinosIds.Count == 0)
+                return resultado; // Lista vacia: no tiene conexiones
+
+            foreach (var idVecino in vecinosIds) // Recorrer los ids de los vecinos
+            {
+                //Buscar al vecino por id
+                var vecino = Personas.FirstOrDefault(p => p.Id == idVecino);
+                if (vecino == null)
+                    continue;
+
+                //Calcular la distancia euclidiana entre origen y vecino
+                double dx = vecino.PosX - origen.PosX;
+                double dy = vecino.PosY - origen.PosY;
+                double distancia = Math.Sqrt(dx * dx + dy * dy);
+
+                resultado.Add((vecino, distancia));
+            }            
+
+            return resultado;
+        }
+
+        // Devuelve el par de familiares  que estan mas lejos uno del otro
+        // Solo se consideran pares que tengan una relación en el grafo 
+        public (Persona? persona1, Persona? persona2, double distancia) ObtenerParMasLejano()
+        {
+            // Si no hay relaciones, no hay nada que calcular
+            if (Adyacencias.Count == 0)
+                return (null, null, 0);
+
+            Persona? mejor1 = null;
+            Persona? mejor2 = null;
+            double maxDistancia = -1;
+
+            // Para evitar contrar dos veces el mismo par (A,B) y (B,A)
+            var paresVisitados = new HashSet<(Guid, Guid)>();
+
+            // Función local para "normalizar" el par de ids (ordenarlos)
+            (Guid, Guid) NormalizarPar(Guid a, Guid b)
+            {
+                return a.CompareTo(b) <= 0 ? (a, b) : (b, a);
+            }
+
+            foreach (var kvp in Adyacencias)
+            {
+                Guid id1 = kvp.Key;
+                var vecinos = kvp.Value;
+                 
+                
+                foreach(var id2 in vecinos)
+                {
+                    if (id1 == id2)
+                        continue; // Ignorar lazos a sí mismo por seguridad
+
+                    // Normalizar el par para evitar duplicados (A,B) y (B,A)
+                    var parNormalizado = NormalizarPar(id1, id2);
+
+                    // Si ya vimos este par, lo saltamos
+                    if (!paresVisitados.Add(parNormalizado))
+                        continue;
+
+                    var p1 = BuscarPersonaPorId(id1);
+                    var p2 = BuscarPersonaPorId(id2);
+
+                    if (p1 == null || p2 == null) continue;
+
+                    // Calcular la distancia entre p1 y p2
+                    double dx = p2.PosX - p1.PosX;
+                    double dy = p2.PosY - p1.PosY;
+                    double distancia = Math.Sqrt(dx * dx + dy * dy);
+
+                    if (distancia > maxDistancia)
+                    {
+                        maxDistancia = distancia;
+                        mejor1 = p1;
+                        mejor2 = p2;
+                    }
+
+                }
+            }
+            if (mejor1 == null || mejor2 == null)
+                return (null, null, 0);
+            return (mejor1, mejor2, maxDistancia);
+        }
+
+        // Devuelve el par de familiares  que estan mas cerca uno del otro
+        public (Persona? persona1, Persona? persona2, double distancia) ObtenerParMasCercano()
+        {
+            // Si no hay relaciones, no hay nada que calcular
+            if (Adyacencias.Count == 0)
+                return (null, null, 0);
+
+            Persona? mejor1 = null;
+            Persona? mejor2 = null;
+            double minDistancia = double.MaxValue;
+
+            // Para evitar contrar dos veces el mismo par (A,B) y (B,A)
+            var paresVisitados = new HashSet<(Guid, Guid)>();
+
+            (Guid, Guid) NormalizarPar(Guid a, Guid b) //Metodo para normalizar pares
+            {
+                return a.CompareTo(b) <= 0 ? (a, b) : (b, a);
+            }
+
+            foreach (var kvp in Adyacencias)
+            {
+                Guid id1 = kvp.Key;
+                var vecinos = kvp.Value;
+
+                foreach (var id2 in vecinos)
+                {
+                    var parNormalizado = NormalizarPar(id1, id2);
+
+                    if (!paresVisitados.Add(parNormalizado))
+                        continue;
+
+                    var p1 = BuscarPersonaPorId(id1);
+                    var p2 = BuscarPersonaPorId(id2);
+
+                    if (p1 == null || p2 == null)  
+                        continue;
+
+                    double dx = p2.PosX - p1.PosX;
+                    double dy = p2.PosY - p1.PosY;
+                    double distancia = Math.Sqrt(dx * dx + dy * dy);
+
+                    if (distancia > minDistancia)
+                    {
+                        minDistancia = distancia;
+                        mejor1 = p1;
+                        mejor2 = p2;
+                    }
+
+                }
+            }
+            // Si nunca encontro un par valido regresa distancia 0 y nulls
+            if (mejor1 == null || mejor2 == null)
+                        return (null, null, 0);
+            return (mejor1, mejor2, minDistancia);
+        }
+
+    
+
         public void MostrarGrafo()
         {
             Console.WriteLine("\nRelaciones en el grafo:\n");
