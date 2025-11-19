@@ -1,4 +1,5 @@
-﻿using InterfazGrafica.Vistas;
+﻿using Clases;
+using InterfazGrafica.Vistas;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,53 +13,53 @@ using System.Windows.Shapes;
 
 namespace InterfazGrafica
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        //Esto es para crear un nuevo grafo cuando exista la clase grafo
-        //private GrafoFamilia_grafo = new GrafoFamilia();
+        // Instancia del grafo de personas
+        private readonly GrafoPersonas _grafo = new GrafoPersonas(); 
         public MainWindow()
         {
             InitializeComponent();
 
             // Al iniciar, se muestra la pantalla de agregar familiar
-            //Recordar pasar el grafo por parametro cuando exista
-            MainContent.Content = new Vistas.AgregarFamiliarControl();
+            MainContent.Content = new Vistas.AgregarFamiliarControl(_grafo);
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
             //Recordar pasar el grafo por parametro cuando exista
-            MainContent.Content = new Vistas.AgregarFamiliarControl();
+            MainContent.Content = new Vistas.AgregarFamiliarControl(_grafo);
         }
 
         //Boton para ir a la vista del mapa
         private void BtnMapa_Click(object sender, RoutedEventArgs e)
         {
-            MainContent.Content = new Vistas.MapaControl();
+            MainContent.Content = new Vistas.MapaControl(_grafo);
         }
 
         //Boton para ir a la vista de estadisticas
         private void BtnEstadisticas_Click(object sender, RoutedEventArgs e)
         {
-            // Crear la vista de estadísticas
-            var statsControl = new EstadisticasControl();
+            var statsControl = new EstadisticasControl(_grafo);
 
-            // DATOS DE PRUEBA (para ver que la ventana funciona)
-            string parCercanoA = "Ana";
-            string parCercanoB = "Juan";
-            string parLejanoA = "Sofía";
-            string parLejanoB = "Pedro";
-            string distanciaPromedio = "345 km";
+            // Usar los datos reales del grafo
+            var (c1, c2, distCercana) = _grafo.ObtenerParMasCercano();
+            var (l1, l2, distLejana)  = _grafo.ObtenerParMasLejano();
+            double distProm           = _grafo.CalcularDistanciaPromedio();
 
-            // Rellenar los TextBox del UserControl
-            statsControl.SetParCercano(parCercanoA, parCercanoB);
-            statsControl.SetParLejano(parLejanoA, parLejanoB);
-            statsControl.SetDistanciaPromedio(distanciaPromedio);
+            statsControl.SetParCercano(
+                c1?.Nombre ?? "N/A",
+                c2?.Nombre ?? "N/A"
+            );
 
-            // Mostrar la vista de estadísticas en el área principal
+            statsControl.SetParLejano(
+                l1?.Nombre ?? "N/A",
+                l2?.Nombre ?? "N/A"
+            );
+
+            statsControl.SetDistanciaPromedio(
+                distProm.ToString("0.00")
+            );
             MainContent.Content = statsControl;
         }
     }
