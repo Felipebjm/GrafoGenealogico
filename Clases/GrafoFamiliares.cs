@@ -264,7 +264,57 @@ namespace Clases
             return (mejor1, mejor2, minDistancia);
         }
 
-    
+        public double CalcularDistanciaPromedio()
+        {
+            if (Adyacencias.Count ==0)
+               return 0;
+
+            double sumaDistancias = 0;
+            int cantidadPares = 0;
+
+            //Para evitar contrar dos veces el mismo par 
+            var paresVisitados = new HashSet<(Guid, Guid)>();
+            (Guid, Guid) NormalizarPar(Guid a, Guid b)
+            {
+                return a.CompareTo(b) <= 0 ? (a, b) : (b, a);
+            }
+
+            foreach (var kvp in Adyacencias)
+            {
+                Guid id1 = kvp.Key;
+                var vecinos = kvp.Value;
+
+                foreach (var id2 in vecinos)
+                {
+                    if (id1 == id2)
+                        continue;
+                    var parNormalizado = NormalizarPar(id1, id2);
+
+                    if (!paresVisitados.Add(parNormalizado)) //Evitar procesar un par ya visitado
+                        continue;
+
+                    var p1 = BuscarPersonaPorId(id1);
+                    var p2 = BuscarPersonaPorId(id2);
+
+                    if (p1 == null || p2 == null) continue;
+
+                    double dx = p2.PosX - p1.PosX;
+                    double dy = p2.PosY - p1.PosY;
+                    double distancia = Math.Sqrt(dx * dx + dy * dy);
+
+                    sumaDistancias += distancia;
+                    cantidadPares++;
+                }
+
+            }
+            if (cantidadPares == 0)
+                return 0;
+            return sumaDistancias/cantidadPares;
+        }
+
+
+
+
 
         public void MostrarGrafo()
         {
