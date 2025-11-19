@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Serialization;
 
@@ -7,7 +8,8 @@ namespace Clases
 {
     public class GrafoPersonas
     {
-        public List<Persona> Personas { get; private set; } = new(); // Lista de personas en el grafo
+        //public Ob<Persona> Personas { get; private set; } = new(); // Lista de personas en el grafo
+        public ObservableCollection<Persona> Personas { get; private set; } = new(); // Lista de personas en el grafo
 
         // Diccionario de adyacencias (relaciones) entre personas
         public Dictionary<Guid, List<Guid>> Adyacencias { get; private set; } = new(); 
@@ -99,19 +101,7 @@ namespace Clases
             }
         }
 
-        public void EliminarPersona(Persona persona)
-        {
-            if (persona == null)
-            {
-                return;
-            }
-            Personas.RemoveAll(p => p.Id == persona.Id); // Eliminar la persona del grafo(de la lista de personas)
-            Adyacencias.Remove(persona.Id); // Eliminar las adyacencias de la persona (de la lista de adyacencias)
-            foreach(var kvp in Adyacencias) // Eliminar las adyacencias de la persona en las listas de adyacencias de otras personas
-            {
-                kvp.Value.Remove(persona.Id);
-            }
-        }
+        
 
         // Calcular la distancia euclidiana entre una persona y sus vecinos
         // El resultado es una lista de tuplas (Persona vecino, double distancia)
