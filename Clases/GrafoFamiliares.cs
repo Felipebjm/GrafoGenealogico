@@ -152,27 +152,28 @@ namespace Clases
             // Si no hay relaciones, no hay nada que calcular
             if (Adyacencias.Count == 0)
                 return (null, null, 0);
-
-            Persona? mejor1 = null;
+            // Variables para rastrear el mejor par encontrado
+            Persona? mejor1 = null; 
             Persona? mejor2 = null;
-            double maxDistancia = -1;
+            double maxDistancia = -1; // Distancia inicial negativa para asegurar que cualquier distancia valida la supere
 
             // Para evitar contrar dos veces el mismo par (A,B) y (B,A)
             var paresVisitados = new HashSet<(Guid, Guid)>();
 
-            // Función local para "normalizar" el par de ids (ordenarlos)
+            // Función local para "normalizar" el par de ids (ordenarlos) 
+            //Se normalizan los pares para evitar duplicados
             (Guid, Guid) NormalizarPar(Guid a, Guid b)
             {
                 return a.CompareTo(b) <= 0 ? (a, b) : (b, a);
             }
 
-            foreach (var kvp in Adyacencias)
+            foreach (var kvp in Adyacencias) 
             {
                 Guid id1 = kvp.Key;
                 var vecinos = kvp.Value;
                  
                 
-                foreach(var id2 in vecinos)
+                foreach(var id2 in vecinos) 
                 {
                     if (id1 == id2)
                         continue; // Ignorar lazos a sí mismo por seguridad
@@ -249,7 +250,7 @@ namespace Clases
                     double dy = p2.PosY - p1.PosY;
                     double distancia = Math.Sqrt(dx * dx + dy * dy);
 
-                    if (distancia > minDistancia)
+                    if (distancia < minDistancia)
                     {
                         minDistancia = distancia;
                         mejor1 = p1;
@@ -266,8 +267,8 @@ namespace Clases
 
         public double CalcularDistanciaPromedio()
         {
-            if (Adyacencias.Count ==0)
-               return 0;
+            if (Adyacencias.Count ==0) // Si no hay relaciones
+                return 0;
 
             double sumaDistancias = 0;
             int cantidadPares = 0;
@@ -301,20 +302,16 @@ namespace Clases
                     double dx = p2.PosX - p1.PosX;
                     double dy = p2.PosY - p1.PosY;
                     double distancia = Math.Sqrt(dx * dx + dy * dy);
-
-                    sumaDistancias += distancia;
-                    cantidadPares++;
+                    
+                    sumaDistancias += distancia; // Acumular la distancia
+                    cantidadPares++; // Contar el par procesado
                 }
 
             }
             if (cantidadPares == 0)
                 return 0;
-            return sumaDistancias/cantidadPares;
+            return sumaDistancias/cantidadPares; // Retornar la distancia promedio
         }
-
-
-
-
 
         public void MostrarGrafo()
         {
