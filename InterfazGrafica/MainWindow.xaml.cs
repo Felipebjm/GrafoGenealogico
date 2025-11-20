@@ -41,25 +41,6 @@ namespace InterfazGrafica
         private void BtnEstadisticas_Click(object sender, RoutedEventArgs e)
         {
             var statsControl = new EstadisticasControl(_grafo);
-
-            // Usar los datos reales del grafo
-            var (c1, c2, distCercana) = _grafo.ObtenerParMasCercano();
-            var (l1, l2, distLejana)  = _grafo.ObtenerParMasLejano();
-            double distProm           = _grafo.CalcularDistanciaPromedio();
-
-            statsControl.SetParCercano(
-                c1?.Nombre ?? "N/A",
-                c2?.Nombre ?? "N/A"
-            );
-
-            statsControl.SetParLejano(
-                l1?.Nombre ?? "N/A",
-                l2?.Nombre ?? "N/A"
-            );
-
-            statsControl.SetDistanciaPromedio(
-                distProm.ToString("0.00")
-            );
             MainContent.Content = statsControl;
         }
     }
