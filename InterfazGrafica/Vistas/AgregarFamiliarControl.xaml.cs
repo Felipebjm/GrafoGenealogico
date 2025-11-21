@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Clases;
 using Microsoft.Win32; //Necesario para el OpenFileDialog
+using System.IO;
 
 namespace InterfazGrafica.Vistas
 {
@@ -106,7 +107,7 @@ namespace InterfazGrafica.Vistas
                 }
 
                 DateTime fechaNacimiento = DpFechaNacimiento.SelectedDate.Value; //fecha de nacimiento seleccionada
-                 
+
                 bool estaVivo = !(ChkNoEstaVivo.IsChecked ?? false); //Checkbox para saber si esta vivo o no
                 int? anioFallecimiento = null;
                 // Validaciones del año de fallecimiento
@@ -141,7 +142,7 @@ namespace InterfazGrafica.Vistas
                 double posY = 0;
                 double.TryParse(TxtX.Text.Trim(), out posX); //Si el usuario ingreso coordenadas, intentar parsearlas
                 double.TryParse(TxtY.Text.Trim(), out posY);
-               
+
                 if (posX == 0 && posY == 0)
                 {
                     MessageBox.Show(
@@ -160,7 +161,14 @@ namespace InterfazGrafica.Vistas
                     return;
                 }
 
-                // 4. Crear el objeto Persona
+                // 4. Validad que el usiario tenga una foto seleccionada
+                if (string.IsNullOrWhiteSpace(_rutaFotoSeleccionada) || !File.Exists(_rutaFotoSeleccionada))
+                {
+                    MessageBox.Show("Debe seleccionar una foto para el familiar.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // 5. Crear el objeto Persona
                 var nuevaPersona = new Persona(
                     nombre: nombre,
                     cedula: cedula,
