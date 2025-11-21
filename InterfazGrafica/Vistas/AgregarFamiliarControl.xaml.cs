@@ -107,22 +107,32 @@ namespace InterfazGrafica.Vistas
                 DateTime fechaNacimiento = DpFechaNacimiento.SelectedDate.Value; //fecha de nacimiento seleccionada
                  
                 bool estaVivo = !(ChkNoEstaVivo.IsChecked ?? false); //Checkbox para saber si esta vivo o no
-
-                //validar año de fallecimiento HAY QUE PONER LA PROPIEDAD DE FECHA DE FALLECIMIENTO EN LA CLASE PERSONA
+                int? anioFallecimiento = null;
+                // Validaciones del año de fallecimiento
                 if (!estaVivo && !string.IsNullOrWhiteSpace(TxtAnoFallecimiento.Text))
                 {
-                    if (!int.TryParse(TxtAnoFallecimiento.Text.Trim(), out int anoFallecimiento))
+                    if (!int.TryParse(TxtAnoFallecimiento.Text.Trim(), out int anoF))
                     {
-                        MessageBox.Show("El año de fallecimiento debe ser un número.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show("El año de fallecimiento debe ser un número.", "Error",
+                            MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
 
-                    if (anoFallecimiento < fechaNacimiento.Year)
+                    if (anoF < fechaNacimiento.Year)
                     {
-                        MessageBox.Show("El año de fallecimiento no puede ser menor al año de nacimiento.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show("El año de fallecimiento no puede ser menor al año de nacimiento.", "Error",
+                            MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
-                   
+
+                    if (anoF > DateTime.Now.Year)
+                    {
+                        MessageBox.Show("El año de fallecimiento no puede ser en el futuro.", "Error",
+                            MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    anioFallecimiento = anoF;
                 }
 
                 // 2. Leer coordenadas 
@@ -152,7 +162,8 @@ namespace InterfazGrafica.Vistas
                     estaVivo: estaVivo,
                     rutaFoto: _rutaFotoSeleccionada,
                     posX: posX,
-                    posY: posY
+                    posY: posY,
+                    anioFallecimiento: anioFallecimiento
                 );
 
                 // 5. Agregar al grafo
