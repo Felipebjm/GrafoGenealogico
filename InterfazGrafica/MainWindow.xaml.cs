@@ -1,4 +1,5 @@
-﻿using InterfazGrafica.Vistas;
+﻿using Clases;
+using InterfazGrafica.Vistas;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,15 +14,17 @@ using Clases;
 
 namespace InterfazGrafica
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
+<<<<<<< HEAD
         // Sistema de estadísticas de la familia
         private EstadisticasFamilia _estadisticasFamilia;
         private EstadisticasControl? _estadisticasControl;
 
+=======
+        // Instancia del grafo de personas
+        private readonly GrafoPersonas _grafo = new GrafoPersonas(); 
+>>>>>>> origin/feature/felipeUI
         public MainWindow()
         {
             InitializeComponent();
@@ -33,24 +36,29 @@ namespace InterfazGrafica
             AgregarDatosDePrueba();
             
             // Al iniciar, se muestra la pantalla de agregar familiar
+<<<<<<< HEAD
             MainContent.Content = new Vistas.AgregarFamiliarControl();
+=======
+            MainContent.Content = new Vistas.AgregarFamiliarControl(_grafo);
+>>>>>>> origin/feature/felipeUI
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
             //Recordar pasar el grafo por parametro cuando exista
-            MainContent.Content = new Vistas.AgregarFamiliarControl();
+            MainContent.Content = new Vistas.AgregarFamiliarControl(_grafo);
         }
 
         //Boton para ir a la vista del mapa
         private void BtnMapa_Click(object sender, RoutedEventArgs e)
         {
-            MainContent.Content = new Vistas.MapaControl();
+            MainContent.Content = new Vistas.MapaControl(_grafo);
         }
 
         //Boton para ir a la vista de estadisticas
         private void BtnEstadisticas_Click(object sender, RoutedEventArgs e)
         {
+<<<<<<< HEAD
             // Crear la vista de estadísticas con los datos reales
             _estadisticasControl = new EstadisticasControl(_estadisticasFamilia);
 
@@ -101,6 +109,10 @@ namespace InterfazGrafica
             _estadisticasFamilia.AgregarPersona(sofia);
             _estadisticasFamilia.AgregarPersona(pedro);
             _estadisticasFamilia.AgregarPersona(abuela);
+=======
+            var statsControl = new EstadisticasControl(_grafo);
+            MainContent.Content = statsControl;
+>>>>>>> origin/feature/felipeUI
         }
     }
 }

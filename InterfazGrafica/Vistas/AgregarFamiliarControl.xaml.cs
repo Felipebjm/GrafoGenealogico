@@ -13,38 +13,37 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Clases;
 using Microsoft.Win32; //Necesario para el OpenFileDialog
 using Clases;
 
 namespace InterfazGrafica.Vistas
 {
-    /// <summary>
-    /// Interaction logic for AgregarFamiliarControl.xaml
-    /// </summary>
     public partial class AgregarFamiliarControl : UserControl
     {
         // Mas adelante hay que pasar el grafo por parametro
         // private GrafoFamilia _grafo;
-
+        private readonly GrafoPersonas _grafo;
         private string? _rutaFotoSeleccionada;
         public string? RutaFotoSeleccionada => _rutaFotoSeleccionada;
 
-
-        public AgregarFamiliarControl()
+        private Persona? _ultimoFamiliarCreado; //Para saber cual fue el ultimo creado
+        public AgregarFamiliarControl(GrafoPersonas grafo)
         {
             InitializeComponent();
+            _grafo = grafo;
+            // Cargar la lista de familiares del grafo en el ComboBox
+            CmbFamiliares.ItemsSource = _grafo.Personas;
         }
 
         private void BtnElegirPosicion_Click(object sender, RoutedEventArgs e)
         {
-            // Aqui se va a abrir un mapa donde el usuario escoje la posicion"
+            // Aqui se va a abrir un mapa donde el usuario escoje la posicion
             // y cuando el usuario haga clic, te devuelve X/Y
-            // esto es para ponerlo en TxtX.Text y TxtY.Text
-            // Crear y mostrar la ventana del mapa como diálogo
             var mapaWindow = new MapaWindow();
             bool? resultado = mapaWindow.ShowDialog();
 
-            // Si el usuario hizo clic en el mapa y la ventana devolvió OK
+            // Si el usuario hizo clic en el mapa y la ventana devolvio OK
             if (resultado == true)
             {
                 // Guardar las coordenadas en los TextBox
@@ -59,12 +58,13 @@ namespace InterfazGrafica.Vistas
             // Crear y configurar el OpenFileDialog
             var OpenFileDialog = new OpenFileDialog
             {
+                // Filtrar el formato de archivo
                 Title = "Seleccionar foto",
                 Filter = "Imágenes (*.jpg;*.jpeg;*.png;*.bmp;*.gif)|*.jpg;*.jpeg;*.png;*.bmp;*.gif"
 
             };
 
-            bool? result = OpenFileDialog.ShowDialog();
+            bool? result = OpenFileDialog.ShowDialog(); // Mostrar el dialog 
 
             if (result == true)
             {
@@ -79,63 +79,128 @@ namespace InterfazGrafica.Vistas
                 bitmap.EndInit();
 
                 ImgFoto.Source = bitmap;
-
-
             }
         }
-
-        private void BtnGuardar_Click(object sender, RoutedEventArgs e)
+        private void BtnGuardar_Click(object sender, RoutedEventArgs e) //Btn para guardar el familiar que se esta creando
         {
             try
             {
-                // Por ahora, crear una persona con datos de ejemplo
-                // hasta que el XAML tenga todos los controles necesarios
-                var nuevaPersona = CrearPersonaDeEjemplo();
+                // 1. Leer y validar datos basicos
+                string nombre = TxtNombre.Text.Trim();
+                if (string.IsNullOrWhiteSpace(nombre)) //Nombre no puede estar vacio
+                {
+                    MessageBox.Show("El nombre no puede estar vacío.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
 
-                // Obtener la ventana principal y agregar la persona
-                var mainWindow = Window.GetWindow(this) as MainWindow;
-                mainWindow?.AgregarPersonaAFamilia(nuevaPersona);
+                if (!int.TryParse(TxtCedula.Text.Trim(), out int cedula) || cedula <= 0) //Cedula debe ser un numero positivo
+                {
+                    MessageBox.Show("La cédula debe ser un número positivo.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
 
-                // Confirmar al usuario
-                MessageBox.Show($"Persona '{nuevaPersona.NombreCompleto}' agregada exitosamente.\n" +
-                              $"Las estadísticas se han actualizado automáticamente.", 
-                              "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (DpFechaNacimiento.SelectedDate == null) //Fecha de nacimiento debe estar seleccionada
+                {
+                    MessageBox.Show("Seleccione una fecha de nacimiento.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                DateTime fechaNacimiento = DpFechaNacimiento.SelectedDate.Value; //fecha de nacimiento seleccionada
+                 
+                bool estaVivo = !(ChkNoEstaVivo.IsChecked ?? false); //Checkbox para saber si esta vivo o no
+                int? anioFallecimiento = null;
+                // Validaciones del año de fallecimiento
+                if (!estaVivo && !string.IsNullOrWhiteSpace(TxtAnoFallecimiento.Text))
+                {
+                    if (!int.TryParse(TxtAnoFallecimiento.Text.Trim(), out int anoF))
+                    {
+                        MessageBox.Show("El año de fallecimiento debe ser un número.", "Error",
+                            MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    if (anoF < fechaNacimiento.Year)
+                    {
+                        MessageBox.Show("El año de fallecimiento no puede ser menor al año de nacimiento.", "Error",
+                            MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    if (anoF > DateTime.Now.Year)
+                    {
+                        MessageBox.Show("El año de fallecimiento no puede ser en el futuro.", "Error",
+                            MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    anioFallecimiento = anoF;
+                }
+
+                // 2. Leer coordenadas 
+                double posX = 0; // Inicializar en 0 por defecto
+                double posY = 0;
+                if (!string.IsNullOrWhiteSpace(TxtX.Text)) //Si el usuario ingreso coordenadas, intentar parsearlas
+                {
+                    double.TryParse(TxtX.Text.Trim(), out posX);
+                }
+                if (!string.IsNullOrWhiteSpace(TxtY.Text))
+                {
+                    double.TryParse(TxtY.Text.Trim(), out posY);
+                }
+
+                // 3. Verificar que no exista otra persona con la misma cedula en el grafo
+                if (_grafo.Personas.Any(p => p.Cedula == cedula))
+                {
+                    MessageBox.Show("Ya existe una persona con esa cédula en el grafo.", "Duplicado", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // 4. Crear el objeto Persona
+                var nuevaPersona = new Persona(
+                    nombre: nombre,
+                    cedula: cedula,
+                    fechaNacimiento: fechaNacimiento,
+                    estaVivo: estaVivo,
+                    rutaFoto: _rutaFotoSeleccionada,
+                    posX: posX,
+                    posY: posY,
+                    anioFallecimiento: anioFallecimiento
+                );
+
+                // 5. Agregar al grafo
+                _grafo.AgregarPersona(nuevaPersona);
+
+                // Guarda como ultimo familiar creado
+                _ultimoFamiliarCreado = nuevaPersona;
+
+                MessageBox.Show("Familiar agregado correctamente.\nAhora puedes usar 'Conectar familiar' para relacionarlo.",
+                                "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                // 6. Limpiar formulario 
+                LimpiarFormulario();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al guardar la persona: {ex.Message}", 
-                              "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ocurrió un error al guardar el familiar:\n{ex.Message}",
+                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            
         }
 
-        /// <summary>
-        /// Crea una persona de ejemplo (temporal hasta completar la integración con el formulario)
-        /// </summary>
-        private Persona CrearPersonaDeEjemplo()
-        {
-            var nombres = new[] { "Carlos", "María", "José", "Ana", "Luis", "Carmen", "Diego", "Laura" };
-            var apellidos = new[] { "González", "Rodríguez", "García", "López", "Martínez", "Hernández", "Pérez", "Sánchez" };
-            
-            var random = new Random();
-            var nombre = nombres[random.Next(nombres.Length)];
-            var apellido = apellidos[random.Next(apellidos.Length)];
-            
-            var persona = new Persona(
-                nombre, 
-                apellido, 
-                DateTime.Today.AddYears(-random.Next(20, 80)),
-                random.Next(50, 600), 
-                random.Next(50, 400)
-            );
-
-            // Algunas personas podrían estar fallecidas
-            if (random.Next(10) < 2) // 20% de probabilidad
-            {
-                persona.FechaFallecimiento = DateTime.Today.AddYears(-random.Next(1, 10));
-            }
-
-            return persona;
+        private void LimpiarFormulario() //Metodo para limpiar el formulario despues de guardar un familiar
+        { 
+            TxtNombre.Text = string.Empty;
+            TxtCedula.Text = string.Empty;
+            DpFechaNacimiento.SelectedDate = null;
+            ChkNoEstaVivo.IsChecked = false;
+            TxtAnoFallecimiento.Text = string.Empty;
+            TxtX.Text = string.Empty;
+            TxtY.Text = string.Empty;
+            _rutaFotoSeleccionada = null;
+            ImgFoto.Source = null;
         }
+
+
 
         private void ChkNoEstaVivo_Checked(object sender, RoutedEventArgs e)
         {
@@ -147,9 +212,34 @@ namespace InterfazGrafica.Vistas
             TxtAnoFallecimiento.IsEnabled = false;
             TxtAnoFallecimiento.Text = string.Empty;
         }
-        private void BtnConectar_Click(object sender, RoutedEventArgs e)
+        private void BtnConectar_Click(object sender, RoutedEventArgs e) //Btn para conecta el familiar que se esta creando con uno de comboBox
         {
+            if (_ultimoFamiliarCreado == null)
+            {
+                MessageBox.Show("Primero debe agregar un familiar antes de conectarlo.",
+                                "Aviso", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
 
+            if (CmbFamiliares.SelectedItem is not Persona seleccionado)
+            {
+                MessageBox.Show("Seleccione un familiar en la lista para conectarlo.",
+                                "Aviso", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            // Evitar conectarlo consigo mismo
+            if (seleccionado.Id == _ultimoFamiliarCreado.Id)
+            {
+                MessageBox.Show("No se puede conectar un familiar consigo mismo.",
+                                "Aviso", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            _grafo.AgregarRelacionBidireccional(_ultimoFamiliarCreado, seleccionado);
+
+            MessageBox.Show($"Se ha conectado a {_ultimoFamiliarCreado.Nombre} con {seleccionado.Nombre}.",
+                            "Conexión creada", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

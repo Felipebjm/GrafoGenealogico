@@ -73,7 +73,7 @@
         <ContentControl x:Name="MainContent"
                         Grid.Row="1"
                         Grid.Column="1"
-                        Margin="10,10,10,10" Grid.ColumnSpan="2"/>
+                        Margin="10"/>
     </Grid>
 </Window>
 
