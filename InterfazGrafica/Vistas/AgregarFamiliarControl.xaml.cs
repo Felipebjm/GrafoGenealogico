@@ -15,7 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Clases;
 using Microsoft.Win32; //Necesario para el OpenFileDialog
-using Clases;
+using System.IO;
 
 namespace InterfazGrafica.Vistas
 {
@@ -86,6 +86,7 @@ namespace InterfazGrafica.Vistas
             try
             {
                 // 1. Leer y validar datos basicos
+                // Validaciones
                 string nombre = TxtNombre.Text.Trim();
                 if (string.IsNullOrWhiteSpace(nombre)) //Nombre no puede estar vacio
                 {
@@ -106,7 +107,7 @@ namespace InterfazGrafica.Vistas
                 }
 
                 DateTime fechaNacimiento = DpFechaNacimiento.SelectedDate.Value; //fecha de nacimiento seleccionada
-                 
+
                 bool estaVivo = !(ChkNoEstaVivo.IsChecked ?? false); //Checkbox para saber si esta vivo o no
                 int? anioFallecimiento = null;
                 // Validaciones del año de fallecimiento
@@ -139,13 +140,18 @@ namespace InterfazGrafica.Vistas
                 // 2. Leer coordenadas 
                 double posX = 0; // Inicializar en 0 por defecto
                 double posY = 0;
-                if (!string.IsNullOrWhiteSpace(TxtX.Text)) //Si el usuario ingreso coordenadas, intentar parsearlas
+                double.TryParse(TxtX.Text.Trim(), out posX); //Si el usuario ingreso coordenadas, intentar parsearlas
+                double.TryParse(TxtY.Text.Trim(), out posY);
+
+                if (posX == 0 && posY == 0)
                 {
-                    double.TryParse(TxtX.Text.Trim(), out posX);
-                }
-                if (!string.IsNullOrWhiteSpace(TxtY.Text))
-                {
-                    double.TryParse(TxtY.Text.Trim(), out posY);
+                    MessageBox.Show(
+                        "Debe seleccionar una ubicación en el mapa.",
+                        "Ubicación requerida",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning
+                    );
+                    return;
                 }
 
                 // 3. Verificar que no exista otra persona con la misma cedula en el grafo
@@ -155,7 +161,14 @@ namespace InterfazGrafica.Vistas
                     return;
                 }
 
-                // 4. Crear el objeto Persona
+                // 4. Validad que el usiario tenga una foto seleccionada
+                if (string.IsNullOrWhiteSpace(_rutaFotoSeleccionada) || !File.Exists(_rutaFotoSeleccionada))
+                {
+                    MessageBox.Show("Debe seleccionar una foto para el familiar.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // 5. Crear el objeto Persona
                 var nuevaPersona = new Persona(
                     nombre: nombre,
                     cedula: cedula,
