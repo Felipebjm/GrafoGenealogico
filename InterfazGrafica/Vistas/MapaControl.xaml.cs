@@ -29,12 +29,7 @@ namespace InterfazGrafica.Vistas
         
         /// Limpia la capa de dibujo (las lineas, imagenes de personas) sin tocar la imagen de fondo
         public void LimpiarOverlay() => MapaCanvas.Children.Clear();
-        /// Cambia la imagen del mapa en tiempo de ejecución.
-        public void SetMapaSource(string sourceUri)
-        {
-            ImgMapa.Source = new BitmapImage(new Uri(sourceUri, UriKind.RelativeOrAbsolute));
-        }
-
+        
         //Redibuja todo el grafo en el canvas
         public void RefrescarMapa()
         {
@@ -53,7 +48,7 @@ namespace InterfazGrafica.Vistas
 
         private void DibujarPersona(Persona persona, double anchoNodo, double altoNodo)
         {
-            var imagenPersona = new Image
+            var imagenPersona = new Image // Crear imagen de la persona
             {
                 Width = anchoNodo,
                 Height = altoNodo,
@@ -61,7 +56,7 @@ namespace InterfazGrafica.Vistas
                 ToolTip = $"{persona.Nombre}\nCédula: {persona.Cedula}",
                 Tag = persona
             };
-            if (!string.IsNullOrWhiteSpace(persona.RutaFoto) && File.Exists(persona.RutaFoto))
+            if (!string.IsNullOrWhiteSpace(persona.RutaFoto) && File.Exists(persona.RutaFoto)) // Cargar foto si existe
             {
                 var bitmap = new BitmapImage();
                 bitmap.BeginInit();
@@ -70,14 +65,14 @@ namespace InterfazGrafica.Vistas
                 bitmap.EndInit();
                 imagenPersona.Source = bitmap;
             }
-            Canvas.SetLeft(imagenPersona, persona.PosX);
+            Canvas.SetLeft(imagenPersona, persona.PosX); // Posicionar en el canvas
             Canvas.SetTop(imagenPersona, persona.PosY);
-            imagenPersona.MouseEnter += ImagenPersona_MouseEnter; // Para mostrar al pasar el mouse
+            // Para mostrar las distancias al dar click el mouse
             imagenPersona.MouseLeftButtonDown += ImagenPersona_MouseLeftButtonDown;
             imagenPersona.MouseLeave += (s, e) => LimpiarEtiquetasDistancia();
-            MapaCanvas.Children.Add(imagenPersona);
+            MapaCanvas.Children.Add(imagenPersona); // Agregar al canvas
 
-            var etiquetaNombre = new TextBlock
+            var etiquetaNombre = new TextBlock // Etiqueta con el nombre
             {
                 Text = persona.Nombre,
                 Foreground = Brushes.White,
@@ -91,12 +86,7 @@ namespace InterfazGrafica.Vistas
             MapaCanvas.Children.Add(etiquetaNombre);
         }
 
-        // Handlers
-        private void ImagenPersona_MouseEnter(object sender, MouseEventArgs e) // Mostrar distancias al pasar el mouse
-        {
-            if (sender is Image img && img.Tag is Persona persona)
-                MostrarDistanciasParaPersona(persona);
-        }
+        // Handler
         private void ImagenPersona_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) // Mostrar distancias al hacer click
         {
             if (sender is Image img && img.Tag is Persona persona)
@@ -108,10 +98,10 @@ namespace InterfazGrafica.Vistas
             // 1. Quitar etiquetas de distancia anteriores
             LimpiarEtiquetasDistancia();
 
-            // 2. Obtener distancias mínimas por grafo desde "origen"
+            // 2. Obtener distancias minimas por grafo desde "origen"
             var distancias = _grafo.CalcularDistancia(origen);
 
-            foreach (var kvp in distancias)
+            foreach (var kvp in distancias) // Recorrer cada destino y su distancia
             {
                 Guid idDestino = kvp.Key;
                 var (distanciaTotal, previoId) = kvp.Value;
@@ -120,8 +110,8 @@ namespace InterfazGrafica.Vistas
                 if (idDestino == origen.Id || double.IsInfinity(distanciaTotal) || previoId == null)
                     continue;
 
-                var destino = _grafo.BuscarPersonaPorId(idDestino);
-                var previo = _grafo.BuscarPersonaPorId(previoId.Value);
+                var destino = _grafo.BuscarPersonaPorId(idDestino); // Nodo destino
+                var previo = _grafo.BuscarPersonaPorId(previoId.Value); // Nodo previo en el camino
 
                 if (destino == null || previo == null)
                     continue;
@@ -146,14 +136,14 @@ namespace InterfazGrafica.Vistas
                     Tag = "DistanciaLabel"
                 };
 
-                // Pequeño offset para que no se pegue exactamente a la línea
+                // offset para que no se pegue exactamente a la línea
                 Canvas.SetLeft(etiqueta, xMid + 4);
                 Canvas.SetTop(etiqueta, yMid + 4);
 
                 MapaCanvas.Children.Add(etiqueta);
             }
         }
-
+        // Elimina todas las etiquetas de distancia del canvas
         private void LimpiarEtiquetasDistancia()
         {
             var aEliminar = new List<UIElement>();
@@ -172,22 +162,20 @@ namespace InterfazGrafica.Vistas
 
         }
 
-
-
         // / Dibuja las relaciones entre personas como lineas en el canvas
         private void DibujarRelaciones(double anchoNodo, double altoNodo)
         {
-            var paresVisitados = new HashSet<(Guid, Guid)>();
+            var paresVisitados = new HashSet<(Guid, Guid)>(); // Para evitar dibujar dos veces la misma relacion
             (Guid, Guid) Normalizar(Guid a, Guid b)
                 => a.CompareTo(b) <= 0 ? (a, b) : (b, a);
 
-            foreach (var kvp in _grafo.Adyacencias)
+            foreach (var kvp in _grafo.Adyacencias) // Recorrer cada persona y sus relaciones
             {
                 var id1 = kvp.Key;
                 var p1 = _grafo.BuscarPersonaPorId(id1);
                 if (p1 == null) continue;
 
-                foreach(var id2 in kvp.Value)
+                foreach(var id2 in kvp.Value) // Recorrer cada relacion de la persona
                 {
                     var p2 = _grafo.BuscarPersonaPorId(id2);
                     if (p2 == null) continue;
@@ -214,10 +202,6 @@ namespace InterfazGrafica.Vistas
                     MapaCanvas.Children.Add(linea);
                 }
             }
-        }
-        private void MapaCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-
         }
     }
 }

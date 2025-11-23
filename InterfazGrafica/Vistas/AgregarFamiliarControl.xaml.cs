@@ -9,11 +9,10 @@ namespace InterfazGrafica.Vistas
 {
     public partial class AgregarFamiliarControl : UserControl
     {
-        // Mas adelante hay que pasar el grafo por parametro
-        // private GrafoFamilia _grafo;
+        // Mas adelante hay que pasar el grafo por parametro;
         private readonly GrafoPersonas _grafo;
         private string? _rutaFotoSeleccionada;
-        public string? RutaFotoSeleccionada => _rutaFotoSeleccionada;
+        
 
         private Persona? _ultimoFamiliarCreado; //Para saber cual fue el ultimo creado
         public AgregarFamiliarControl(GrafoPersonas grafo)
@@ -200,15 +199,12 @@ namespace InterfazGrafica.Vistas
             _rutaFotoSeleccionada = null;
             ImgFoto.Source = null;
         }
-
-
-
-        private void ChkNoEstaVivo_Checked(object sender, RoutedEventArgs e)
+        private void ChkNoEstaVivo_Checked(object sender, RoutedEventArgs e) //Checkbox para saber si el familiar esta vivo o no
         {
             TxtAnoFallecimiento.IsEnabled = true;
         }
 
-        private void ChkNoEstaVivo_Unchecked(object sender, RoutedEventArgs e)
+        private void ChkNoEstaVivo_Unchecked(object sender, RoutedEventArgs e) //Checkbox para saber si el familiar esta vivo o no
         {
             TxtAnoFallecimiento.IsEnabled = false;
             TxtAnoFallecimiento.Text = string.Empty;
