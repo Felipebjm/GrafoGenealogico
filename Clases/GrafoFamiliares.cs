@@ -161,11 +161,11 @@ namespace Clases
 
         // Devuelve el par de familiares  que estan mas lejos uno del otro
         // Solo se consideran pares que tengan una relación en el grafo 
-        public (Persona? persona1, Persona? persona2, double distancia) ObtenerParMasLejano()
+        public (Persona? persona1, Persona? persona2) ObtenerParMasLejano()
         {
             // Si no hay relaciones, no hay nada que calcular
             if (Adyacencias.Count == 0)
-                return (null, null, 0);
+                return (null, null);
             // Variables para rastrear el mejor par encontrado
             Persona? mejor1 = null; 
             Persona? mejor2 = null;
@@ -219,16 +219,16 @@ namespace Clases
                 }
             }
             if (mejor1 == null || mejor2 == null)
-                return (null, null, 0);
-            return (mejor1, mejor2, maxDistancia);
+                return (null, null);
+            return (mejor1, mejor2);
         }
 
         // Devuelve el par de familiares  que estan mas cerca uno del otro
-        public (Persona? persona1, Persona? persona2, double distancia) ObtenerParMasCercano()
+        public (Persona? persona1, Persona? persona2) ObtenerParMasCercano()
         {
             // Si no hay relaciones, no hay nada que calcular
             if (Adyacencias.Count == 0)
-                return (null, null, 0);
+                return (null, null);
 
             Persona? mejor1 = null;
             Persona? mejor2 = null;
@@ -275,8 +275,8 @@ namespace Clases
             }
             // Si nunca encontro un par valido regresa distancia 0 y nulls
             if (mejor1 == null || mejor2 == null)
-                        return (null, null, 0);
-            return (mejor1, mejor2, minDistancia);
+                        return (null, null);
+            return (mejor1, mejor2);
         }
 
         public double CalcularDistanciaPromedio()

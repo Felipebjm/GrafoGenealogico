@@ -53,19 +53,19 @@
                     Content="Agregar familiar"
                     Margin="10,5"
                     Padding="5"
-                    Click="BtnAgregar_Click" FontSize="16"/>
+                    Click="BtnAgregar_Click" FontSize="16" Background="#FF75ADEC" FontWeight="Bold"/>
 
             <Button x:Name="BtnMapa"
                     Content="Mapa"
                     Margin="10,5"
                     Padding="5"
-                    Click="BtnMapa_Click" FontSize="16"/>
+                    Click="BtnMapa_Click" FontSize="16" Background="#FF75ADEC" FontWeight="Bold"/>
 
             <Button x:Name="BtnEstadisticas"
                     Content="Estadísticas"
                     Margin="10,5"
                     Padding="5"
-                    Click="BtnEstadisticas_Click" FontSize="16"/>
+                    Click="BtnEstadisticas_Click" FontSize="16" Background="#FF75ADEC" FontWeight="Bold"/>
         </StackPanel>
 
         <!-- AREA DE CONTENIDO -->

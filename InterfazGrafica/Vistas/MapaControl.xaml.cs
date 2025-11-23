@@ -128,7 +128,7 @@ namespace InterfazGrafica.Vistas
 
                 var etiqueta = new TextBlock
                 {
-                    Text = distanciaTotal.ToString("0.0"),
+                    Text = $"{distanciaTotal:0.0} km",
                     FontSize = 12,
                     Foreground = Brushes.Yellow,
                     Background = new SolidColorBrush(Color.FromArgb(180, 0, 0, 0)),

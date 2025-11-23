@@ -29,13 +29,13 @@ namespace InterfazGrafica.Vistas
             }
 
             // Par mas cercano
-            var (c1, c2, distCercana) = _grafo.ObtenerParMasCercano();
+            var (c1, c2) = _grafo.ObtenerParMasCercano();
             SetParCercano(
                 c1?.Nombre ?? "N/A",
                 c2?.Nombre ?? "N/A"
             );
             // Par más lejano
-            var (l1, l2, distLejana) = _grafo.ObtenerParMasLejano();
+            var (l1, l2) = _grafo.ObtenerParMasLejano();
             SetParLejano(
                 l1?.Nombre ?? "N/A",
                 l2?.Nombre ?? "N/A"

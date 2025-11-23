@@ -31,15 +31,15 @@
             <!-- FORMULARIO -->
             <StackPanel Grid.Column="0" Margin="0,0,20,0">
                 <!-- Nombre -->
-                <TextBlock Text="Nombre:" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Text="Nombre:" FontSize="16" FontWeight="Bold"/>
                 <TextBox x:Name="TxtNombre" Margin="-115,0,0,8" Width="294"/>
 
                 <!-- Cédula -->
-                <TextBlock Text="Cédula:" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Text="Cédula:" FontSize="16" FontWeight="Bold"/>
                 <TextBox x:Name="TxtCedula" Margin="-258,0,0,8" Width="154"/>
 
                 <!-- Fecha de nacimiento -->
-                <TextBlock Text="Fecha de nacimiento:" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Text="Fecha de nacimiento:" FontSize="16" FontWeight="Bold"/>
                 <DatePicker x:Name="DpFechaNacimiento" Margin="-205,0,0,8" Width="208"/>
 
                 <!-- ¿Está vivo? / Fallecido -->
@@ -51,14 +51,14 @@
                 </StackPanel>
 
                 <TextBlock Text="Si tu familiar ya no está con nosotros, marca la casilla y escribe el año en que falleció."
-                           FontSize="10"
+                           FontSize="12"
                            Foreground="Black"
                            TextWrapping="Wrap"
                            Margin="0,0,0,4" FontWeight="Bold" FontStyle="Italic"/>
 
                 <!-- Año de fallecimiento (deshabilitado por default) -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                    <TextBlock Text="Año de fallecimiento:" VerticalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock Text="Año de fallecimiento:" VerticalAlignment="Center" FontWeight="Bold" FontSize="14"/>
                     <TextBox x:Name="TxtAnoFallecimiento"
                              Width="80"
                              Margin="5,0,0,0"
@@ -66,13 +66,13 @@
                 </StackPanel>
 
                 <!-- Ubicacion -->
-                <TextBlock Text="Ubicación en el mapa:" FontWeight="Bold" Margin="0,10,0,4"/>
+                <TextBlock Text="Ubicación en el mapa:" FontWeight="Bold" Margin="0,10,0,4" FontSize="16"/>
                 <Button Content="Elegir posición en el mapa"
                         Width="180"
-                        Click="BtnElegirPosicion_Click"/>
+                        Click="BtnElegirPosicion_Click" Background="#FF98BCE4" FontSize="14"/>
 
                 <!-- Relaciones -->
-                <TextBlock Text="Conectar con otro familiar:" FontWeight="Bold" Margin="0,15,0,5"/>
+                <TextBlock Text="Conectar con otro familiar:" FontWeight="Bold" Margin="0,15,0,5" FontSize="14"/>
                 <StackPanel Orientation="Horizontal">
                     <ComboBox x:Name="CmbFamiliares"
                     DisplayMemberPath="Nombre"
@@ -81,32 +81,27 @@
                     Margin="0,0,10,0" />
                     <Button Content="Conectar familiar"
                      Width="130"
-                    Click="BtnConectar_Click"/>
+                    Click="BtnConectar_Click" Background="#FF98BCE4"/>
                 </StackPanel>
 
                 <!-- Boton final -->
                 <Button Content="Agregar"
                         Margin="0,55,0,0"
-                        Width="150"
-                        Click="BtnGuardar_Click" Height="26"/>
+                        Width="147"
+                        Click="BtnGuardar_Click" Height="28" Background="#FF1A72D4" FontSize="18" FontWeight="Bold"/>
             </StackPanel>
 
             <!-- PANEL DERECHO: foto / info extra -->
             <StackPanel Grid.Column="1">
-                <TextBlock Text="Foto:"/>
+                <TextBlock Text="Foto:" FontSize="18"/>
                 <Button Content="Seleccionar foto"
                         Margin="0,0,0,8"
-                        Click="BtnSeleccionarFoto_Click"/>
+                        Click="BtnSeleccionarFoto_Click" Background="#FF98BCE4" FontSize="16"/>
 
                 <!-- preview de la foto -->
                 <Border BorderBrush="#DDD" BorderThickness="1" Width="140" Height="140">
                     <Image x:Name="ImgFoto" Stretch="UniformToFill"/>
                 </Border>
-
-                <TextBlock Text="* La posición se usa para mostrarlo en el mapa."
-                           TextWrapping="Wrap"
-                           Margin="0,10,0,0"
-                           Foreground="Black" FontStyle="Italic" FontSize="14"/>
             </StackPanel>
         </Grid>
     </Grid>
