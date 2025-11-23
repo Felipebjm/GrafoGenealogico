@@ -12,7 +12,8 @@ namespace InterfazGrafica.Vistas
         // Mas adelante hay que pasar el grafo por parametro;
         private readonly GrafoPersonas _grafo;
         private string? _rutaFotoSeleccionada;
-        
+        private double? _posXSeleccionada;
+        private double? _posYSeleccionada;
 
         private Persona? _ultimoFamiliarCreado; //Para saber cual fue el ultimo creado
         public AgregarFamiliarControl(GrafoPersonas grafo)
@@ -34,8 +35,8 @@ namespace InterfazGrafica.Vistas
             if (resultado == true)
             {
                 // Guardar las coordenadas en los TextBox
-                TxtX.Text = mapaWindow.CoordenadaX.ToString("0"); // sin decimales
-                TxtY.Text = mapaWindow.CoordenadaY.ToString("0");
+                _posXSeleccionada = mapaWindow.CoordenadaX; // sin decimales
+                _posYSeleccionada = mapaWindow.CoordenadaY;
             }
         }
 
@@ -125,12 +126,9 @@ namespace InterfazGrafica.Vistas
                 }
 
                 // 2. Leer coordenadas 
-                double posX = 0; // Inicializar en 0 por defecto
-                double posY = 0;
-                double.TryParse(TxtX.Text.Trim(), out posX); //Si el usuario ingreso coordenadas, intentar parsearlas
-                double.TryParse(TxtY.Text.Trim(), out posY);
+                
 
-                if (posX == 0 && posY == 0)
+                if (!_posXSeleccionada.HasValue || !_posYSeleccionada.HasValue)
                 {
                     MessageBox.Show(
                         "Debe seleccionar una ubicación en el mapa.",
@@ -140,6 +138,8 @@ namespace InterfazGrafica.Vistas
                     );
                     return;
                 }
+                double posX = _posXSeleccionada.Value;
+                double posY = _posYSeleccionada.Value;
 
                 // 3. Verificar que no exista otra persona con la misma cedula en el grafo
                 if (_grafo.Personas.Any(p => p.Cedula == cedula))
@@ -194,8 +194,8 @@ namespace InterfazGrafica.Vistas
             DpFechaNacimiento.SelectedDate = null;
             ChkNoEstaVivo.IsChecked = false;
             TxtAnoFallecimiento.Text = string.Empty;
-            TxtX.Text = string.Empty;
-            TxtY.Text = string.Empty;
+            _posXSeleccionada = null;
+            _posYSeleccionada = null;
             _rutaFotoSeleccionada = null;
             ImgFoto.Source = null;
         }

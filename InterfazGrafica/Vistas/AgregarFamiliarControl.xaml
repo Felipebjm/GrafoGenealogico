@@ -67,12 +67,6 @@
 
                 <!-- Ubicacion -->
                 <TextBlock Text="Ubicación en el mapa:" FontWeight="Bold" Margin="0,10,0,4"/>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                    <TextBlock Text="X:" VerticalAlignment="Center"/>
-                    <TextBox x:Name="TxtX" Width="60" Margin="5,0,15,0" IsReadOnly="True"/>
-                    <TextBlock Text="Y:" VerticalAlignment="Center"/>
-                    <TextBox x:Name="TxtY" Width="60" Margin="5,0,0,0" IsReadOnly="True"/>
-                </StackPanel>
                 <Button Content="Elegir posición en el mapa"
                         Width="180"
                         Click="BtnElegirPosicion_Click"/>
