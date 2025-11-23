@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Xml.Serialization;
 
 namespace Clases
 {
     public class GrafoPersonas
     {
-        //public Ob<Persona> Personas { get; private set; } = new(); // Lista de personas en el grafo
         public ObservableCollection<Persona> Personas { get; private set; } = new(); // Lista de personas en el grafo
 
         // Diccionario de adyacencias (relaciones) entre personas
@@ -20,7 +18,6 @@ namespace Clases
                 throw new ArgumentNullException(nameof(persona));
             if (Personas.Any(p => p.Cedula == persona.Cedula)) // Verificar si la persona ya existe por cedula
             {
-                Console.WriteLine("La persona con cedula " + persona.Cedula + " ya existe en el grafo.");
                 return;
             }
 
@@ -68,6 +65,7 @@ namespace Clases
         }
 
         //Retornar los familiares de una persona
+        
         public IEnumerable<Persona> ObtenerPersonasRelacionadas(Persona persona) //Enumerable para retornar una lista de personas relacionadas
         {
             if (persona == null) // Validar que la persona no sea nula
@@ -83,25 +81,7 @@ namespace Clases
                     yield return relacionada; // Retornar la persona relacionada
             }
         }
-        // Eliminar relacion bidireccional entre dos personas
-        public void EliminarRelacionBidereccional(Persona p1, Persona p2)
-        {
-            if (p1 == null || p2 == null)
-                return;
-            EliminarRelacion(p1.Id, p2.Id);
-            EliminarRelacion(p2.Id, p1.Id);
-        }
-
-        // Eliminar relacion unidireccional entre dos personas
-        public void EliminarRelacion(Guid id1, Guid id2)
-        {
-            if (Adyacencias.TryGetValue(id1, out var lista)) // Obtener la lista de adyacencias
-            {
-                lista.Remove(id2);
-            }
-        }
-
-
+        
         // Implementacion del algoritmo de Dijkstra para calcular distancias  desde una persona origen a los otros nodo
         // Retorna un diccionario con las distancias y el nodo previo en el camino mas corto
         public Dictionary<Guid, (double distancia, Guid? previo)> CalcularDistancia(Persona origen)
@@ -345,29 +325,6 @@ namespace Clases
             if (cantidadPares == 0)
                 return 0;
             return sumaDistancias/cantidadPares; // Retornar la distancia promedio
-        }
-
-        public void MostrarGrafo()
-        {
-            Console.WriteLine("\nRelaciones en el grafo:\n");
-            foreach (var persona in Personas)
-            {
-                Console.WriteLine($"{persona.Nombre}:");
-                if (Adyacencias.TryGetValue(persona.Id, out var lista))
-                {
-                    foreach (var idRelacionado in lista)
-                    {
-                        Persona? relacionada = Personas.FirstOrDefault(p => p.Id == idRelacionado);
-                        if (relacionada != null)
-                        {
-                            Console.WriteLine($"   → {relacionada.Nombre}");
-                        }
-                    }
-                }
-                Console.WriteLine();
-
-            }
-
         }
     }
 }
