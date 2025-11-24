@@ -73,9 +73,10 @@ namespace Clases
                     yield return relacionada; // Retornar la persona relacionada
             }
         }
-        
+
         // Implementacion del algoritmo de Dijkstra para calcular distancias  desde una persona origen a los otros nodo
         // Retorna un diccionario con las distancias y el nodo previo en el camino mas corto
+        // Clave:Guid, Valor: tupla(distancia acumulada, Id previo en el camino) 
         public Dictionary<Guid, (double distancia, Guid? previo)> CalcularDistancia(Persona origen)
         {
             if (origen == null)
@@ -102,6 +103,7 @@ namespace Clases
                 Guid? actualId = null;
                 double mejorDist = double.PositiveInfinity;
 
+                // Buscar el nodo con la distancia minima
                 foreach (var kvp in distancias)
                 {
                     var id = kvp.Key;
@@ -114,13 +116,14 @@ namespace Clases
                     }
                 }
 
-                // Si no hay mas alcanzables se terminamos
+                // Si no hay mas alcanzables se termina
                 if (actualId == null)
                     break;
 
-                visitados.Add(actualId.Value);
+                visitados.Add(actualId.Value); // Marcar como visitado
 
-                // 2. Relajar las aristas salientes desde actualId
+                // 2. Actualizar las aristas salientes desde actualId
+                // Buscar vecinos en el grafo
                 if (!Adyacencias.TryGetValue(actualId.Value, out var vecinos))
                     continue;
 
@@ -128,6 +131,7 @@ namespace Clases
                 if (personaActual == null)
                     continue;
 
+                // Para cada vecino calcula el peso de la arista y actualiza la distancia si es mejor
                 foreach (var vecinoId in vecinos)
                 {
                     var vecino = BuscarPersonaPorId(vecinoId);
@@ -139,16 +143,16 @@ namespace Clases
                     double dy = vecino.PosY - personaActual.PosY;
                     double peso = Math.Sqrt(dx * dx + dy * dy);
 
-                    double nuevaDist = mejorDist + peso;
+                    double nuevaDist = mejorDist + peso; // Distancia acumulada hasta el vecino
 
-                    var (distActualVecino, _) = distancias[vecinoId];
-                    if (nuevaDist < distActualVecino)
+                    var (distActualVecino, _) = distancias[vecinoId]; 
+                    if (nuevaDist < distActualVecino) // Si la nueva distancia es mejor actualiza
                     {
-                        distancias[vecinoId] = (nuevaDist, actualId.Value);
+                        distancias[vecinoId] = (nuevaDist, actualId.Value); // Actualizar distancia y previo
                     }
                 }
             }
-            return distancias;
+            return distancias; // Retornar el diccionario de distancias
         }
 
         // Devuelve el par de familiares  que estan mas lejos uno del otro
@@ -164,10 +168,12 @@ namespace Clases
             double maxDistancia = -1; // Distancia inicial negativa para asegurar que cualquier distancia valida la supere
 
             // Para evitar contrar dos veces el mismo par (A,B) y (B,A)
-            var paresVisitados = new HashSet<(Guid, Guid)>();
+            // HashSet es una estructura que no permite duplicados
+            var paresVisitados = new HashSet<(Guid, Guid)>(); //Hash de tuplas de guids
 
             // Metodo para "normalizar" el par de ids (ordenarlos) 
             //Se normalizan los pares para evitar duplicados
+            // El menor id (guid) siempre va primero
             (Guid, Guid) NormalizarPar(Guid a, Guid b)
             {
                 return a.CompareTo(b) <= 0 ? (a, b) : (b, a);
