@@ -135,7 +135,7 @@ namespace PruebasUnitarias
     [TestClass]
     public class TestEstadisticas
     {
-        // Prueba #8: una sola relacion p1,p2 debe devolver ese par y su distancia
+        // Prueba #8: una sola relación p1,p2 debe devolver ese par
         [TestMethod]
         public void ObtenerParMasLejano_UnaRelacion_RetornaEsePar()
         {
@@ -147,27 +147,28 @@ namespace PruebasUnitarias
             grafo.AgregarPersona(p1);
             grafo.AgregarPersona(p2);
 
-            grafo.AgregarRelacion(p1.Id, p2.Id); // Solo hay una relacion
+            grafo.AgregarRelacion(p1.Id, p2.Id); // Solo hay una relación
 
             var resultado = grafo.ObtenerParMasLejano();
 
             Assert.IsNotNull(resultado.persona1);
             Assert.IsNotNull(resultado.persona2);
-            // El par puede presentarse en orden p1,p2 o p2,p1 
-            var ids = new[] { resultado.persona1.Id, resultado.persona2.Id };
-            CollectionAssert.AreEquivalent(new[] { p1.Id, p2.Id }, ids.ToList(), "El par retornado debe contener p1 y p2");
-            Assert.AreEqual(5.0, resultado.distancia, 1e-9, "La distancia debe ser 5.0 (3-4-5)");
+
+            // El par puede presentarse en orden p1,p2 o p2,p1
+            var ids = new[] { resultado.persona1!.Id, resultado.persona2!.Id };
+            CollectionAssert.AreEquivalent(new[] { p1.Id, p2.Id }, ids.ToList(),
+                "El par retornado debe contener p1 y p2");
         }
-        [TestMethod]
 
         //Prueba #9: Verificar que ObtenerParMasLejano devuelve el par con mayor distancia correctamente
+        [TestMethod]
         public void ObtenerParMasLejano_DebeRetornarParConMayorDistancia()
         {
             // Arrange
             var grafo = new GrafoPersonas();
 
             // Crear tres personas usando el constructor real
-            var a = new Persona("A", 1, DateTime.Now.AddYears(-30), true, null, 0, 0);      
+            var a = new Persona("A", 1, DateTime.Now.AddYears(-30), true, null, 0, 0);
             var b = new Persona("B", 2, DateTime.Now.AddYears(-25), true, null, 3, 4);      // (3,4) distancia a-A = 5
             var c = new Persona("C", 3, DateTime.Now.AddYears(-20), true, null, 10, 0);     // (10,0) distancia a-A = 10
 
@@ -179,26 +180,20 @@ namespace PruebasUnitarias
             grafo.AgregarRelacionBidireccional(a, b);
             grafo.AgregarRelacionBidireccional(a, c);
 
-            // par mas lejano es A,C con distancia 10
-            double distanciaEsperada = Math.Sqrt((c.PosX - a.PosX) * (c.PosX - a.PosX) + (c.PosY - a.PosY) * (c.PosY - a.PosY));
-
-            var (persona1, persona2, distancia) = grafo.ObtenerParMasLejano();
+            // Act
+            var (persona1, persona2) = grafo.ObtenerParMasLejano();
 
             // Assert
             Assert.IsNotNull(persona1, "persona1 no debe ser null");
             Assert.IsNotNull(persona2, "persona2 no debe ser null");
 
-            // Verificar que las dos personas devueltas son A y C (comparando Cedula para mayor robustez)
+            // Verificar que las dos personas devueltas son A y C (comparando Cédula para mayor robustez)
             bool esParEsperado =
-                (persona1.Cedula == a.Cedula && persona2.Cedula == c.Cedula) ||
-                (persona1.Cedula == c.Cedula && persona2.Cedula == a.Cedula);
+                (persona1!.Cedula == a.Cedula && persona2!.Cedula == c.Cedula) ||
+                (persona1!.Cedula == c.Cedula && persona2!.Cedula == a.Cedula);
 
-            Assert.IsTrue(esParEsperado, $"Se esperaba el par A-C pero se obtuvo {persona1?.Nombre}-{persona2?.Nombre}");
-
-            // Verificar distancia con tolerancia
-            double tolerancia = 1e-9;
-            Assert.IsTrue(Math.Abs(distancia - distanciaEsperada) <= tolerancia,
-                $"Distancia esperada {distanciaEsperada} pero se obtuvo {distancia}");
+            Assert.IsTrue(esParEsperado,
+                $"Se esperaba el par A-C pero se obtuvo {persona1?.Nombre}-{persona2?.Nombre}");
         }
 
         [TestMethod]
@@ -221,26 +216,20 @@ namespace PruebasUnitarias
             grafo.AgregarRelacionBidireccional(a, b);
             grafo.AgregarRelacionBidireccional(a, c);
 
-            // par más cercano es a,b con distancia 
-            double distanciaEsperada = Math.Sqrt((b.PosX - a.PosX) * (b.PosX - a.PosX) +
-                                                 (b.PosY - a.PosY) * (b.PosY - a.PosY));
+            // Act: el par más cercano debe ser A-B
+            var (persona1, persona2) = grafo.ObtenerParMasCercano();
 
-            var (persona1, persona2, distancia) = grafo.ObtenerParMasCercano();
-
+            // Assert
             Assert.IsNotNull(persona1, "persona1 no debe ser null");
             Assert.IsNotNull(persona2, "persona2 no debe ser null");
 
-            // Verificar que las dos personas devueltas son a,b
+            // Verificar que las dos personas devueltas son A y B (sin importar el orden)
             bool esParEsperado =
-                (persona1.Cedula == a.Cedula && persona2.Cedula == b.Cedula) ||
-                (persona1.Cedula == b.Cedula && persona2.Cedula == a.Cedula);
+                (persona1!.Cedula == a.Cedula && persona2!.Cedula == b.Cedula) ||
+                (persona1!.Cedula == b.Cedula && persona2!.Cedula == a.Cedula);
 
-            Assert.IsTrue(esParEsperado, $"Se esperaba el par A-B pero se obtuvo {persona1?.Nombre}-{persona2?.Nombre}");
-
-            // Verificar distancia con tolerancia
-            double tolerancia = 1e-9;
-            Assert.IsTrue(Math.Abs(distancia - distanciaEsperada) <= tolerancia,
-                $"Distancia esperada {distanciaEsperada} pero se obtuvo {distancia}");
+            Assert.IsTrue(esParEsperado,
+                $"Se esperaba el par A-B pero se obtuvo {persona1?.Nombre}-{persona2?.Nombre}");
         }
 
         [TestMethod]

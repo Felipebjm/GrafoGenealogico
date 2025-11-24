@@ -7,12 +7,13 @@ namespace Clases
 {
     public class GrafoPersonas
     {
-        public ObservableCollection<Persona> Personas { get; private set; } = new(); // Lista de personas en el grafo
+        // Lista de personas en el grafo
+        public ObservableCollection<Persona> Personas { get; private set; } = new(); 
 
         // Diccionario de adyacencias (relaciones) entre personas
         public Dictionary<Guid, List<Guid>> Adyacencias { get; private set; } = new(); 
 
-        public void AgregarPersona(Persona persona)
+        public void AgregarPersona(Persona persona) // Agregar una persona al grafo
         {
             if (persona == null)
                 throw new ArgumentNullException(nameof(persona));
@@ -22,23 +23,15 @@ namespace Clases
             }
 
             Personas.Add(persona); // Agregar la persona al grafo
-            if (!Adyacencias.ContainsKey(persona.Id))
+            if (!Adyacencias.ContainsKey(persona.Id)) // Verificar si ya tiene adyacencias
             {
                 Adyacencias[persona.Id] = new List<Guid>(); // Inicializar la lista de adyacencias para la nueva persona
             }
         }
-        //Buscar persona por nombre
-        public Persona? BuscarPersonaPorNombre(string nombre) =>
-        Personas.FirstOrDefault(p =>
-            string.Equals(p.Nombre, nombre, StringComparison.OrdinalIgnoreCase));
         //Buscar persona por id
         public Persona? BuscarPersonaPorId(Guid id) =>
             Personas.FirstOrDefault(p => p.Id == id);
-        //Buscar persona por cedula
-        public Persona? BuscarPersonaPorCedula(int cedula) =>
-           Personas.FirstOrDefault(p => p.Cedula == cedula);
-
-
+        
         // Agregar relacion bidireccional entre dos personas
         public void AgregarRelacionBidireccional(Persona p1, Persona p2)
         {
@@ -47,7 +40,7 @@ namespace Clases
             if (p1.Id == p2.Id)  // No permitir relaciones consigo mismo
                 return;            
 
-            AgregarRelacion(p1.Id, p2.Id);
+            AgregarRelacion(p1.Id, p2.Id); // Agregar la relacion en ambos sentidon
             AgregarRelacion(p2.Id, p1.Id);
         }
 
@@ -60,12 +53,11 @@ namespace Clases
             }
             if (!Adyacencias[id1].Contains(id2)) // Evitar duplicados
             {
-                Adyacencias[id1].Add(id2);
+                Adyacencias[id1].Add(id2); // Agregar la relacion a la lista de adyacencias
             }
         }
 
         //Retornar los familiares de una persona
-        
         public IEnumerable<Persona> ObtenerPersonasRelacionadas(Persona persona) //Enumerable para retornar una lista de personas relacionadas
         {
             if (persona == null) // Validar que la persona no sea nula
@@ -163,7 +155,7 @@ namespace Clases
         // Solo se consideran pares que tengan una relación en el grafo 
         public (Persona? persona1, Persona? persona2) ObtenerParMasLejano()
         {
-            // Si no hay relaciones, no hay nada que calcular
+            // Si no hay relaciones no calcula nada
             if (Adyacencias.Count == 0)
                 return (null, null);
             // Variables para rastrear el mejor par encontrado
@@ -174,56 +166,56 @@ namespace Clases
             // Para evitar contrar dos veces el mismo par (A,B) y (B,A)
             var paresVisitados = new HashSet<(Guid, Guid)>();
 
-            // Función local para "normalizar" el par de ids (ordenarlos) 
+            // Metodo para "normalizar" el par de ids (ordenarlos) 
             //Se normalizan los pares para evitar duplicados
             (Guid, Guid) NormalizarPar(Guid a, Guid b)
             {
                 return a.CompareTo(b) <= 0 ? (a, b) : (b, a);
             }
 
-            foreach (var kvp in Adyacencias) 
+            foreach (var kvp in Adyacencias) //kvp es un par clave-valor del diccionario
             {
-                Guid id1 = kvp.Key;
-                var vecinos = kvp.Value;
-                 
-                
-                foreach(var id2 in vecinos) 
+                Guid id1 = kvp.Key; // Id de la persona actual
+                var vecinos = kvp.Value; // Lista de ids de personas relacionadas
+
+                foreach (var id2 in vecinos) // Se recorren los vecinos del id1
                 {
                     if (id1 == id2)
-                        continue; // Ignorar lazos a sí mismo por seguridad
+                        continue; // Ignorar lazos a si 
 
                     // Normalizar el par para evitar duplicados (A,B) y (B,A)
                     var parNormalizado = NormalizarPar(id1, id2);
 
-                    // Si ya vimos este par, lo saltamos
+                    // Si ya sevio este lo salta
                     if (!paresVisitados.Add(parNormalizado))
                         continue;
-
-                    var p1 = BuscarPersonaPorId(id1);
+                    // Buscar las personas correspondientes
+                    var p1 = BuscarPersonaPorId(id1); 
                     var p2 = BuscarPersonaPorId(id2);
 
                     if (p1 == null || p2 == null) continue;
 
-                    // Calcular la distancia entre p1 y p2
+                    // Calcular la distancia entre p1 y p2 (distancia entre puntos)
                     double dx = p2.PosX - p1.PosX;
                     double dy = p2.PosY - p1.PosY;
                     double distancia = Math.Sqrt(dx * dx + dy * dy);
 
                     if (distancia > maxDistancia)
                     {
+                        // Actualizar el mejor par encontrado y la distancia
                         maxDistancia = distancia;
                         mejor1 = p1;
                         mejor2 = p2;
                     }
-
                 }
             }
-            if (mejor1 == null || mejor2 == null)
+            if (mejor1 == null || mejor2 == null) // Si nunca encontro un par valido regresa distancia 0 y nulls
                 return (null, null);
-            return (mejor1, mejor2);
+            return (mejor1, mejor2); // Retornar el mejor par encontrado
         }
 
         // Devuelve el par de familiares  que estan mas cerca uno del otro
+        // Funcionamiento similar a ObtenerParMasLejano
         public (Persona? persona1, Persona? persona2) ObtenerParMasCercano()
         {
             // Si no hay relaciones, no hay nada que calcular
@@ -264,13 +256,12 @@ namespace Clases
                     double dy = p2.PosY - p1.PosY;
                     double distancia = Math.Sqrt(dx * dx + dy * dy);
 
-                    if (distancia < minDistancia)
+                    if (distancia < minDistancia) // Actualizar el mejor par encontrado
                     {
                         minDistancia = distancia;
                         mejor1 = p1;
                         mejor2 = p2;
                     }
-
                 }
             }
             // Si nunca encontro un par valido regresa distancia 0 y nulls
@@ -281,11 +272,11 @@ namespace Clases
 
         public double CalcularDistanciaPromedio()
         {
-            if (Adyacencias.Count ==0) // Si no hay relaciones
+            if (Adyacencias.Count ==0) // Si no hay relaciones no hace nada
                 return 0;
 
-            double sumaDistancias = 0;
-            int cantidadPares = 0;
+            double sumaDistancias = 0; // Suma acumulada de distancias
+            int cantidadPares = 0; // Contador de pares procesados
 
             //Para evitar contrar dos veces el mismo par 
             var paresVisitados = new HashSet<(Guid, Guid)>();
@@ -294,12 +285,12 @@ namespace Clases
                 return a.CompareTo(b) <= 0 ? (a, b) : (b, a);
             }
 
-            foreach (var kvp in Adyacencias)
+            foreach (var kvp in Adyacencias) // Recorrer todos los nodos y sus vecinos
             {
-                Guid id1 = kvp.Key;
-                var vecinos = kvp.Value;
+                Guid id1 = kvp.Key; // Id de la persona actual
+                var vecinos = kvp.Value; // Lista de ids de personas relacionadas
 
-                foreach (var id2 in vecinos)
+                foreach (var id2 in vecinos) // Recorrer los vecinos del id1
                 {
                     if (id1 == id2)
                         continue;
@@ -315,8 +306,8 @@ namespace Clases
 
                     double dx = p2.PosX - p1.PosX;
                     double dy = p2.PosY - p1.PosY;
-                    double distancia = Math.Sqrt(dx * dx + dy * dy);
-                    
+                    double distancia = Math.Sqrt(dx * dx + dy * dy); // Calcular la distancia entre p1 y p2
+
                     sumaDistancias += distancia; // Acumular la distancia
                     cantidadPares++; // Contar el par procesado
                 }
