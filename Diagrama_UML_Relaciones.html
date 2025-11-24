@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagrama UML - Relaciones y Herencias</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 30px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            font-size: 28px;
+        }
+        
+        .diagram {
+            position: relative;
+            min-height: 1300px;
+            background: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .class-box {
+            position: absolute;
+            background: white;
+            border: 2px solid #34495e;
+            border-radius: 8px;
+            padding: 0;
+            min-width: 200px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+        
+        .class-name {
+            font-weight: bold;
+            text-align: center;
+            padding: 12px;
+            background: #3498db;
+            color: white;
+            border-radius: 6px 6px 0 0;
+            margin: 0;
+            font-size: 14px;
+        }
+        
+        .class-info {
+            font-size: 11px;
+            color: #666;
+            text-align: center;
+            font-style: italic;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .class-methods {
+            padding: 10px;
+            font-family: 'Consolas', monospace;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+        
+        .method {
+            margin: 3px 0;
+            color: #333;
+        }
+        
+        .method-public { color: #27ae60; }
+        .method-private { color: #e74c3c; }
+        
+        /* Posiciones de las clases */
+        .persona { top: 50px; left: 450px; }
+        .grafo { top: 330px; left: 50px; }
+        .estadisticas { top: 330px; left: 650px; }
+        .par-distancia { top: 560px; left: 750px; width: 180px; }
+        .est-calculadas { top: 560px; left: 550px; width: 180px; }
+        .mainwindow { top: 730px; left: 350px; }
+        .agregar-control { top: 1000px; left: 50px; width: 200px; }
+        .estadisticas-control { top: 1000px; left: 300px; width: 200px; }
+        .mapa-control { top: 1000px; left: 550px; width: 200px; }
+        
+        /* SVG para las flechas */
+        svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .arrow {
+            stroke-width: 2;
+            fill: none;
+        }
+        
+        .composicion { stroke: #e74c3c; }
+        .asociacion { stroke: #3498db; }
+        .dependencia { stroke: #95a5a6; stroke-dasharray: 5,5; }
+        .herencia { stroke: #27ae60; }
+        
+        .legend {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .legend h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .legend-item {
+            display: inline-block;
+            margin: 10px 20px 10px 0;
+            font-size: 14px;
+        }
+        
+        .legend-line {
+            display: inline-block;
+            width: 40px;
+            height: 2px;
+            margin: 0 10px;
+            vertical-align: middle;
+        }
+        
+        .leg-comp { background: #e74c3c; }
+        .leg-asoc { background: #3498db; }
+        .leg-dep { 
+            background: repeating-linear-gradient(
+                to right,
+                #95a5a6 0px,
+                #95a5a6 5px,
+                transparent 5px,
+                transparent 10px
+            );
+            height: 2px;
+        }
+        .leg-her { background: #27ae60; }
+        
+        .notes {
+            margin-top: 30px;
+            padding: 20px;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            border-radius: 5px;
+        }
+        
+        .notes h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .notes ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+        
+        .notes li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📐 Diagrama UML - Relaciones entre Clases</h1>
+        
+        <div class="diagram">
+            <!-- SVG para las líneas de relación -->
+            <svg>
+                <!-- Markers para las flechas - DEBEN IR PRIMERO -->
+                <defs>
+                    <marker id="arrowComp" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <polygon points="0 0, 10 3, 0 6" fill="#e74c3c"/>
+                    </marker>
+                    <marker id="arrowAsoc" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <polygon points="0 0, 10 3, 0 6" fill="#3498db"/>
+                    </marker>
+                    <marker id="arrowDep" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <polygon points="0 0, 10 3, 0 6" fill="#95a5a6"/>
+                    </marker>
+                </defs>
+                
+                <!-- Persona -> GrafoPersonas (Composición) -->
+                <line x1="520" y1="200" x2="200" y2="330" class="arrow composicion" marker-end="url(#arrowComp)"/>
+                <text x="320" y="260" fill="#e74c3c" font-size="13" font-weight="bold">contiene 0..*</text>
+                
+                <!-- Persona -> EstadisticasFamilia (Asociación) -->
+                <line x1="570" y1="200" x2="700" y2="330" class="arrow asociacion" marker-end="url(#arrowAsoc)"/>
+                <text x="620" y="260" fill="#3498db" font-size="13" font-weight="bold">usa 0..*</text>
+                
+                <!-- EstadisticasFamilia -> ParDistancia (Composición interna) -->
+                <line x1="770" y1="510" x2="820" y2="560" class="arrow composicion" marker-end="url(#arrowComp)"/>
+                
+                <!-- EstadisticasFamilia -> EstadisticasCalculadas (Composición interna) -->
+                <line x1="720" y1="510" x2="650" y2="560" class="arrow composicion" marker-end="url(#arrowComp)"/>
+                
+                <!-- GrafoPersonas -> MainWindow (usado por) -->
+                <line x1="200" y1="580" x2="400" y2="730" class="arrow dependencia" marker-end="url(#arrowDep)"/>
+                <text x="260" y="650" fill="#95a5a6" font-size="12">inyecta</text>
+                
+                <!-- EstadisticasFamilia -> MainWindow -->
+                <line x1="700" y1="580" x2="500" y2="730" class="arrow dependencia" marker-end="url(#arrowDep)"/>
+                <text x="560" y="650" fill="#95a5a6" font-size="12">inyecta</text>
+                
+                <!-- MainWindow -> AgregarFamiliarControl -->
+                <line x1="380" y1="930" x2="150" y2="1000" class="arrow dependencia" marker-end="url(#arrowDep)"/>
+                
+                <!-- MainWindow -> EstadisticasControl -->
+                <line x1="430" y1="930" x2="390" y2="1000" class="arrow dependencia" marker-end="url(#arrowDep)"/>
+                
+                <!-- MainWindow -> MapaControl -->
+                <line x1="500" y1="930" x2="620" y2="1000" class="arrow dependencia" marker-end="url(#arrowDep)"/>
+            </svg>
+            
+            <!-- Clases del modelo -->
+            <div class="class-box persona">
+                <div class="class-name">Persona</div>
+                <div class="class-info">Entidad Base del Sistema</div>
+                <div class="class-methods">
+                    <div class="method method-public">+ Persona(nombre, cedula, ...)</div>
+                    <div class="method method-public">+ ToString(): string</div>
+                    <div class="method method-public">+ CalcularDistancia(Persona): double</div>
+                </div>
+            </div>
+            
+            <!-- Clases de lógica de negocio -->
+            <div class="class-box grafo">
+                <div class="class-name">GrafoPersonas</div>
+                <div class="class-info">Gestiona personas y relaciones</div>
+                <div class="class-methods">
+                    <div class="method method-public">+ AgregarPersona(Persona)</div>
+                    <div class="method method-public">+ BuscarPersonaPorNombre(string)</div>
+                    <div class="method method-public">+ BuscarPersonaPorCedula(int)</div>
+                    <div class="method method-public">+ AgregarRelacionBidireccional(p1, p2)</div>
+                    <div class="method method-public">+ ObtenerPersonasRelacionadas(Persona)</div>
+                    <div class="method method-public">+ ObtenerParMasCercano()</div>
+                    <div class="method method-public">+ ObtenerParMasLejano()</div>
+                    <div class="method method-public">+ CalcularDistanciaPromedio()</div>
+                </div>
+            </div>
+            
+            <div class="class-box estadisticas">
+                <div class="class-name">EstadisticasFamilia</div>
+                <div class="class-info">Calcula estadísticas de la familia</div>
+                <div class="class-methods">
+                    <div class="method method-public">+ AgregarPersona(Persona)</div>
+                    <div class="method method-public">+ RemoverPersona(string)</div>
+                    <div class="method method-public">+ CalcularEstadisticas()</div>
+                    <div class="method method-public">+ ObtenerPersonas(): List</div>
+                    <div class="method method-public">+ ContarPersonas(): int</div>
+                </div>
+            </div>
+            
+            <!-- Clases internas -->
+            <div class="class-box par-distancia">
+                <div class="class-name" style="font-size: 13px;">ParDistancia</div>
+                <div class="class-info" style="font-size: 10px;">Clase interna</div>
+                <div class="class-methods" style="font-size: 10px;">
+                    <div class="method method-public">+ PersonaA: Persona</div>
+                    <div class="method method-public">+ PersonaB: Persona</div>
+                    <div class="method method-public">+ Distancia: double</div>
+                </div>
+            </div>
+            
+            <div class="class-box est-calculadas">
+                <div class="class-name" style="font-size: 12px;">EstadisticasCalculadas</div>
+                <div class="class-info" style="font-size: 10px;">Clase interna</div>
+                <div class="class-methods" style="font-size: 10px;">
+                    <div class="method method-public">+ TotalPersonas: int</div>
+                    <div class="method method-public">+ ParMasCercano</div>
+                    <div class="method method-public">+ ParMasLejano</div>
+                    <div class="method method-public">+ EdadPromedio: double</div>
+                </div>
+            </div>
+            
+            <!-- Capa de presentación -->
+            <div class="class-box mainwindow">
+                <div class="class-name">MainWindow</div>
+                <div class="class-info">Ventana principal - Coordina todo</div>
+                <div class="class-methods">
+                    <div class="method method-public">+ MainWindow()</div>
+                    <div class="method method-private">- BtnAgregar_Click()</div>
+                    <div class="method method-private">- BtnMapa_Click()</div>
+                    <div class="method method-private">- BtnEstadisticas_Click()</div>
+                    <div class="method method-public">+ AgregarPersonaAFamilia(Persona)</div>
+                </div>
+            </div>
+            
+            <div class="class-box agregar-control">
+                <div class="class-name" style="font-size: 13px;">AgregarFamiliarControl</div>
+                <div class="class-info" style="font-size: 10px;">Control de Usuario WPF</div>
+                <div class="class-methods" style="font-size: 10px;">
+                    <div class="method method-private">- BtnGuardar_Click()</div>
+                    <div class="method method-private">- BtnConectar_Click()</div>
+                    <div class="method method-private">- BtnElegirPosicion_Click()</div>
+                    <div class="method method-private">- BtnSeleccionarFoto_Click()</div>
+                </div>
+            </div>
+            
+            <div class="class-box estadisticas-control">
+                <div class="class-name" style="font-size: 13px;">EstadisticasControl</div>
+                <div class="class-info" style="font-size: 10px;">Control de Usuario WPF</div>
+                <div class="class-methods" style="font-size: 10px;">
+                    <div class="method method-public">+ ActualizarEstadisticas()</div>
+                    <div class="method method-public">+ SetParCercano()</div>
+                    <div class="method method-public">+ SetParLejano()</div>
+                    <div class="method method-private">- CalcularYMostrarEstadisticas()</div>
+                </div>
+            </div>
+            
+            <div class="class-box mapa-control">
+                <div class="class-name" style="font-size: 13px;">MapaControl</div>
+                <div class="class-info" style="font-size: 10px;">Control de Usuario WPF</div>
+                <div class="class-methods" style="font-size: 10px;">
+                    <div class="method method-public">+ MapaControl(GrafoPersonas)</div>
+                    <div class="method method-private">- RenderizarGrafo()</div>
+                    <div class="method method-private">- EventHandlers()</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Leyenda -->
+        <div class="legend">
+            <h3>🔍 Leyenda de Relaciones</h3>
+            <div class="legend-item">
+                <span class="legend-line leg-comp"></span>
+                <strong style="color: #e74c3c;">Composición</strong> - Contiene y es dueño
+            </div>
+            <div class="legend-item">
+                <span class="legend-line leg-asoc"></span>
+                <strong style="color: #3498db;">Asociación</strong> - Usa pero no posee
+            </div>
+            <div class="legend-item">
+                <span class="legend-line leg-dep"></span>
+                <strong style="color: #95a5a6;">Dependencia</strong> - Requiere para funcionar
+            </div>
+        </div>
+        
+        <!-- Notas explicativas -->
+        <div class="notes">
+            <h3>📝 Relaciones Clave del Sistema</h3>
+            <ul>
+                <li><strong>GrafoPersonas</strong> contiene y gestiona múltiples <strong>Persona</strong> (composición fuerte)</li>
+                <li><strong>EstadisticasFamilia</strong> usa <strong>Persona</strong> para cálculos pero no las posee</li>
+                <li><strong>MainWindow</strong> crea y posee instancias de <strong>GrafoPersonas</strong> y <strong>EstadisticasFamilia</strong></li>
+                <li><strong>MainWindow</strong> inyecta <strong>GrafoPersonas</strong> a los controles de usuario (AgregarFamiliar, Estadisticas, Mapa)</li>
+                <li>Los <strong>UserControls</strong> dependen de <strong>GrafoPersonas</strong> para funcionar</li>
+                <li><strong>ParDistancia</strong> y <strong>EstadisticasCalculadas</strong> son clases internas de <strong>EstadisticasFamilia</strong></li>
+            </ul>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+            <p style="color: #666;">
+                <strong>Patrón:</strong> MainWindow actúa como coordinador central (Mediator)<br>
+                <strong>Flujo:</strong> Modelo (Persona) ← Lógica (Grafo/Estadísticas) ← Presentación (MainWindow → Controls)
+            </p>
+        </div>
+    </div>
+</body>
+</html>
