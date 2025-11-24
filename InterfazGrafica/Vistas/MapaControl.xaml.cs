@@ -17,7 +17,7 @@ namespace InterfazGrafica.Vistas
         private const double ANCHO_NODO = 60;
         private const double ALTO_NODO = 60;
 
-        public MapaControl(GrafoPersonas grafo)
+        public MapaControl(GrafoPersonas grafo) // Constructor 
         {
             InitializeComponent();
             _grafo = grafo; // Guardar referencia al grafo
@@ -46,6 +46,7 @@ namespace InterfazGrafica.Vistas
             }
         }
 
+        // Dibuja una persona en el canvas
         private void DibujarPersona(Persona persona, double anchoNodo, double altoNodo)
         {
             var imagenPersona = new Image // Crear imagen de la persona
@@ -58,15 +59,16 @@ namespace InterfazGrafica.Vistas
             };
             if (!string.IsNullOrWhiteSpace(persona.RutaFoto) && File.Exists(persona.RutaFoto)) // Cargar foto si existe
             {
-                var bitmap = new BitmapImage();
+                var bitmap = new BitmapImage(); // Crear bitmap desde la ruta
                 bitmap.BeginInit();
-                bitmap.UriSource = new Uri(persona.RutaFoto, UriKind.Absolute);
+                bitmap.UriSource = new Uri(persona.RutaFoto, UriKind.Absolute); // Establecer la fuente de la imagen
                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
                 bitmap.EndInit();
-                imagenPersona.Source = bitmap;
+                imagenPersona.Source = bitmap; // Asignar la imagen al control
             }
             Canvas.SetLeft(imagenPersona, persona.PosX); // Posicionar en el canvas
             Canvas.SetTop(imagenPersona, persona.PosY);
+
             // Para mostrar las distancias al dar click el mouse
             imagenPersona.MouseLeftButtonDown += ImagenPersona_MouseLeftButtonDown;
             imagenPersona.MouseLeave += (s, e) => LimpiarEtiquetasDistancia();
@@ -75,22 +77,23 @@ namespace InterfazGrafica.Vistas
             var etiquetaNombre = new TextBlock // Etiqueta con el nombre
             {
                 Text = persona.Nombre,
-                Foreground = Brushes.White,
+                Foreground = Brushes.White, // Color del texto
                 FontWeight = FontWeights.Bold,
                 FontSize = 14,
                 Width = anchoNodo,
-                TextAlignment = TextAlignment.Center
+                TextAlignment = TextAlignment.Center // Centrar el texto
             };
-            Canvas.SetLeft(etiquetaNombre, persona.PosX);
-            Canvas.SetTop(etiquetaNombre, persona.PosY + altoNodo + 2);
-            MapaCanvas.Children.Add(etiquetaNombre);
+            Canvas.SetLeft(etiquetaNombre, persona.PosX); // Posicionar debajo de la imagen
+            Canvas.SetTop(etiquetaNombre, persona.PosY + altoNodo + 2); // 2 pixels debajo
+            MapaCanvas.Children.Add(etiquetaNombre); 
         }
 
         // Handler
-        private void ImagenPersona_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) // Mostrar distancias al hacer click
+        // Mostrar distancias al hacer click
+        private void ImagenPersona_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (sender is Image img && img.Tag is Persona persona)
-                MostrarDistanciasParaPersona(persona);
+            if (sender is Image img && img.Tag is Persona persona) // Obtener la persona del tag
+                MostrarDistanciasParaPersona(persona); // Mostrar distancias desde esa persona
         }
 
         private void MostrarDistanciasParaPersona(Persona origen)
@@ -98,13 +101,13 @@ namespace InterfazGrafica.Vistas
             // 1. Quitar etiquetas de distancia anteriores
             LimpiarEtiquetasDistancia();
 
-            // 2. Obtener distancias minimas por grafo desde "origen"
+            // 2. Obtener distancias minimas por grafo desde el origen
             var distancias = _grafo.CalcularDistancia(origen);
 
             foreach (var kvp in distancias) // Recorrer cada destino y su distancia
             {
-                Guid idDestino = kvp.Key;
-                var (distanciaTotal, previoId) = kvp.Value;
+                Guid idDestino = kvp.Key; // Nodo destino
+                var (distanciaTotal, previoId) = kvp.Value; // Distancia total y nodo previo en el camino
 
                 // Saltar el propio origen o nodos sin camino
                 if (idDestino == origen.Id || double.IsInfinity(distanciaTotal) || previoId == null)
@@ -117,16 +120,17 @@ namespace InterfazGrafica.Vistas
                     continue;
 
                 // 3. Colocar la etiqueta sobre la ÚLTIMA arista del camino:
-                // la que une "previo" -> "destino"
-                double x1 = previo.PosX + ANCHO_NODO / 2.0;
-                double y1 = previo.PosY + ALTO_NODO / 2.0;
-                double x2 = destino.PosX + ANCHO_NODO / 2.0;
+                // la que une previo al destino
+                // Calcular punto medio de la linea entre previo y destino
+                double x1 = previo.PosX + ANCHO_NODO / 2.0; 
+                double y1 = previo.PosY + ALTO_NODO / 2.0; 
+                double x2 = destino.PosX + ANCHO_NODO / 2.0; 
                 double y2 = destino.PosY + ALTO_NODO / 2.0;
-
-                double xMid = (x1 + x2) / 2.0;
+                // Punto medio
+                double xMid = (x1 + x2) / 2.0; 
                 double yMid = (y1 + y2) / 2.0;
 
-                var etiqueta = new TextBlock
+                var etiqueta = new TextBlock // Crear etiqueta con la distancia
                 {
                     Text = $"{distanciaTotal:0.0} km",
                     FontSize = 12,
@@ -146,16 +150,17 @@ namespace InterfazGrafica.Vistas
         // Elimina todas las etiquetas de distancia del canvas
         private void LimpiarEtiquetasDistancia()
         {
-            var aEliminar = new List<UIElement>();
+            // Buscar y eliminar todas las etiquetas con el tag DistanciaLabel
+            var aEliminar = new List<UIElement>(); // Lista temporal para evitar modificar la coleccion mientras se itera
 
             foreach (UIElement child in MapaCanvas.Children)
             {
-                if (child is TextBlock tb && tb.Tag is string tag && tag == "DistanciaLabel")
+                if (child is TextBlock tb && tb.Tag is string tag && tag == "DistanciaLabel") 
                 {
                     aEliminar.Add(child);
                 }
             }
-            foreach (var el in aEliminar)
+            foreach (var el in aEliminar) // Eliminar las etiquetas encontradas
             {
                 MapaCanvas.Children.Remove(el);
             }
@@ -171,8 +176,8 @@ namespace InterfazGrafica.Vistas
 
             foreach (var kvp in _grafo.Adyacencias) // Recorrer cada persona y sus relaciones
             {
-                var id1 = kvp.Key;
-                var p1 = _grafo.BuscarPersonaPorId(id1);
+                var id1 = kvp.Key; // Id de la persona origen
+                var p1 = _grafo.BuscarPersonaPorId(id1); // Obtener la persona origen
                 if (p1 == null) continue;
 
                 foreach(var id2 in kvp.Value) // Recorrer cada relacion de la persona
@@ -184,9 +189,10 @@ namespace InterfazGrafica.Vistas
                     if ( !paresVisitados.Add(par))
                         continue; // Ya dibujado
 
-                    double x1 = p1.PosX + anchoNodo / 2.0;
-                    double y1 = p1.PosY + altoNodo / 2.0;
-                    double x2 = p2.PosX + anchoNodo / 2.0;
+                    // Calcular puntos centrales de cada persona
+                    double x1 = p1.PosX + anchoNodo / 2.0; 
+                    double y1 = p1.PosY + altoNodo / 2.0;   
+                    double x2 = p2.PosX + anchoNodo / 2.0;  
                     double y2 = p2.PosY + altoNodo / 2.0;
 
                     var linea = new Line // Dibujar linea entre p1 y p2

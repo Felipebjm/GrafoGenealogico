@@ -6,7 +6,7 @@ namespace InterfazGrafica.Vistas
     public partial class EstadisticasControl : UserControl
     {
         private readonly GrafoPersonas _grafo;
-        public EstadisticasControl(GrafoPersonas grafo)
+        public EstadisticasControl(GrafoPersonas grafo) // Constructor que recibe el grafo de personas
         {
             InitializeComponent();
             _grafo = grafo ?? throw new ArgumentNullException(nameof(grafo));
@@ -16,8 +16,7 @@ namespace InterfazGrafica.Vistas
         // Calcula las estadisticas y las muestra en la interfaz
         private void CalcularYMostrarEstadisticas()
         {
-            Limpiar();
-            // Si no hay relaciones, muestra eso
+            // Si no hay relaciones, muestra esto
             if (_grafo.Adyacencias.Count == 0)
             {
                 TxtPromedio.Text = "0";
@@ -60,16 +59,6 @@ namespace InterfazGrafica.Vistas
         public void SetDistanciaPromedio(string distanciaPromedio)
         {
             TxtPromedio.Text = (distanciaPromedio ?? string.Empty) + "km";
-        }
-        /// Limpia todos los campos (por si hiciera falta resetear).
-     
-        public void Limpiar()
-        {
-            TxtCercanoA.Text = string.Empty;
-            TxtCercanoB.Text = string.Empty;
-            TxtLejanoA.Text = string.Empty;
-            TxtLejanoB.Text = string.Empty;
-            TxtPromedio.Text = string.Empty;
         }
     }
 }
