@@ -6,3 +6,4 @@
 ## Características
 - Registro y visualización de relaciones familiares
 - Interfaz gráfica (WPF)
+- Pruebas unitarias con MStest

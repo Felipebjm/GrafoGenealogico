@@ -1,61 +1,64 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using Clases;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace InterfazGrafica.Vistas
 {
     public partial class EstadisticasControl : UserControl
     {
-        public EstadisticasControl()
+        private readonly GrafoPersonas _grafo;
+        public EstadisticasControl(GrafoPersonas grafo) // Constructor que recibe el grafo de personas
         {
             InitializeComponent();
+            _grafo = grafo ?? throw new ArgumentNullException(nameof(grafo));
+            CalcularYMostrarEstadisticas();
         }
 
-       
-        /// Establece los nombres del par más cercano.
-        /// Ejemplo: SetParCercano("Ana", "Juan");
+        // Calcula las estadisticas y las muestra en la interfaz
+        private void CalcularYMostrarEstadisticas()
+        {
+            // Si no hay relaciones, muestra esto
+            if (_grafo.Adyacencias.Count == 0)
+            {
+                TxtPromedio.Text = "0";
+                TxtCercanoA.Text = "N/A";
+                TxtCercanoB.Text = "N/A";
+                TxtLejanoA.Text = "N/A";
+                TxtLejanoB.Text = "N/A";
+                return;
+            }
+
+            // Par mas cercano
+            var (c1, c2) = _grafo.ObtenerParMasCercano();
+            SetParCercano(
+                c1?.Nombre ?? "N/A",
+                c2?.Nombre ?? "N/A"
+            );
+            // Par más lejano
+            var (l1, l2) = _grafo.ObtenerParMasLejano();
+            SetParLejano(
+                l1?.Nombre ?? "N/A",
+                l2?.Nombre ?? "N/A"
+            );
+            // Distancia promedio
+            double promedio = _grafo.CalcularDistanciaPromedio();
+            SetDistanciaPromedio(promedio.ToString("0.00"));
+        }
+        /// Establece los nombres del par mas cercano.
         public void SetParCercano(string nombreA, string nombreB)
         {
             TxtCercanoA.Text = nombreA ?? string.Empty;
             TxtCercanoB.Text = nombreB ?? string.Empty;
         }
-
-  
         /// Establece los nombres del par mss lejano.
-       
         public void SetParLejano(string nombreA, string nombreB)
         {
             TxtLejanoA.Text = nombreA ?? string.Empty;
             TxtLejanoB.Text = nombreB ?? string.Empty;
         }
         /// Establece la distancia promedio entre familiares (como texto).
-
         public void SetDistanciaPromedio(string distanciaPromedio)
         {
-            TxtPromedio.Text = distanciaPromedio ?? string.Empty;
-        }
-
-        
-        /// Limpia todos los campos (por si hiciera falta resetear).
-     
-        public void Limpiar()
-        {
-            TxtCercanoA.Text = string.Empty;
-            TxtCercanoB.Text = string.Empty;
-            TxtLejanoA.Text = string.Empty;
-            TxtLejanoB.Text = string.Empty;
-            TxtPromedio.Text = string.Empty;
+            TxtPromedio.Text = (distanciaPromedio ?? string.Empty) + "km";
         }
     }
 }

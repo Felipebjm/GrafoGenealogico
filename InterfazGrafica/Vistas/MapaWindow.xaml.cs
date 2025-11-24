@@ -20,20 +20,21 @@ namespace InterfazGrafica.Vistas
         public double CoordenadaX { get; private set; }
         public double CoordenadaY { get; private set; }
 
-        public MapaWindow()
+        public MapaWindow() // Constructor
         {
             InitializeComponent();
         }
 
-        private void GridMapa_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        // Evento que se dispara al hacer clic en el Grid del mapa
+        private void GridMapa_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) 
         {
-            // Obtener la posición del clic relativa al Grid
+            // Obtener la posicion del clic relativa al Grid
             var punto = e.GetPosition(GridMapa);
 
             CoordenadaX = punto.X;
             CoordenadaY = punto.Y;
 
-            // Cerramos la ventana indicando que se eligió una posición válida
+            // Cierra la ventana indicando que se eligio una posicion valida
             DialogResult = true;
             Close();
         }
