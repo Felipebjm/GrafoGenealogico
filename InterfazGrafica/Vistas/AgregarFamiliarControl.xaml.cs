@@ -1,18 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Clases;
 using Microsoft.Win32; //Necesario para el OpenFileDialog
 using System.IO;
@@ -21,14 +9,13 @@ namespace InterfazGrafica.Vistas
 {
     public partial class AgregarFamiliarControl : UserControl
     {
-        // Mas adelante hay que pasar el grafo por parametro
-        // private GrafoFamilia _grafo;
         private readonly GrafoPersonas _grafo;
         private string? _rutaFotoSeleccionada;
-        public string? RutaFotoSeleccionada => _rutaFotoSeleccionada;
+        private double? _posXSeleccionada; // Coordenada X seleccionada en el mapa
+        private double? _posYSeleccionada; // Coordenada Y seleccionada en el mapa
 
-        private Persona? _ultimoFamiliarCreado; //Para saber cual fue el ultimo creado
-        public AgregarFamiliarControl(GrafoPersonas grafo)
+        private Persona? _ultimoFamiliarCreado; // Almacena el ultimo familiar creado
+        public AgregarFamiliarControl(GrafoPersonas grafo) //Constructor del control de agregar familiar
         {
             InitializeComponent();
             _grafo = grafo;
@@ -38,23 +25,23 @@ namespace InterfazGrafica.Vistas
 
         private void BtnElegirPosicion_Click(object sender, RoutedEventArgs e)
         {
-            // Aqui se va a abrir un mapa donde el usuario escoje la posicion
-            // y cuando el usuario haga clic, te devuelve X/Y
+            // Abre una ventana con el mapa donde el usuario puede hacer clic
+            // Cuando el usuario haga clic,devuelve X,Y
             var mapaWindow = new MapaWindow();
             bool? resultado = mapaWindow.ShowDialog();
 
-            // Si el usuario hizo clic en el mapa y la ventana devolvio OK
+            // Si el usuario hizo clic en el mapa y la ventana devolvio OK 
             if (resultado == true)
             {
                 // Guardar las coordenadas en los TextBox
-                TxtX.Text = mapaWindow.CoordenadaX.ToString("0"); // sin decimales
-                TxtY.Text = mapaWindow.CoordenadaY.ToString("0");
+                _posXSeleccionada = mapaWindow.CoordenadaX; 
+                _posYSeleccionada = mapaWindow.CoordenadaY;
             }
         }
 
         private void BtnSeleccionarFoto_Click(object sender, RoutedEventArgs e)
         {
-            // Esto va a ser para abrir un OpenFileDialog y cargar la imagen en ImgFoto.Source
+            // Abrir un OpenFileDialog y cargar la imagen en ImgFoto.Source
             // Crear y configurar el OpenFileDialog
             var OpenFileDialog = new OpenFileDialog
             {
@@ -74,11 +61,11 @@ namespace InterfazGrafica.Vistas
                 //Cargar la imagen en el control ImgFoto
                 var bitmap = new BitmapImage();
                 bitmap.BeginInit();
-                bitmap.UriSource = new Uri(_rutaFotoSeleccionada);
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.EndInit();
+                bitmap.UriSource = new Uri(_rutaFotoSeleccionada); // Establecer la fuente de la imagen
+                bitmap.CacheOption = BitmapCacheOption.OnLoad; 
+                bitmap.EndInit(); // Finalizar la inicializacion del BitmapImage
 
-                ImgFoto.Source = bitmap;
+                ImgFoto.Source = bitmap; // Asignar la imagen al control ImgFoto
             }
         }
         private void BtnGuardar_Click(object sender, RoutedEventArgs e) //Btn para guardar el familiar que se esta creando
@@ -113,37 +100,34 @@ namespace InterfazGrafica.Vistas
                 // Validaciones del año de fallecimiento
                 if (!estaVivo && !string.IsNullOrWhiteSpace(TxtAnoFallecimiento.Text))
                 {
-                    if (!int.TryParse(TxtAnoFallecimiento.Text.Trim(), out int anoF))
+                    if (!int.TryParse(TxtAnoFallecimiento.Text.Trim(), out int anoF)) //Si el año de fallecimiento es un numero
                     {
                         MessageBox.Show("El año de fallecimiento debe ser un número.", "Error",
                             MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
 
-                    if (anoF < fechaNacimiento.Year)
+                    if (anoF < fechaNacimiento.Year) //El año de fallecimiento no puede ser menor al año de nacimiento
                     {
                         MessageBox.Show("El año de fallecimiento no puede ser menor al año de nacimiento.", "Error",
                             MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
 
-                    if (anoF > DateTime.Now.Year)
+                    if (anoF > DateTime.Now.Year) //El año de fallecimiento no puede ser en el futuro
                     {
                         MessageBox.Show("El año de fallecimiento no puede ser en el futuro.", "Error",
                             MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
 
-                    anioFallecimiento = anoF;
+                    anioFallecimiento = anoF; //Asignar el año de fallecimiento
                 }
 
-                // 2. Leer coordenadas 
-                double posX = 0; // Inicializar en 0 por defecto
-                double posY = 0;
-                double.TryParse(TxtX.Text.Trim(), out posX); //Si el usuario ingreso coordenadas, intentar parsearlas
-                double.TryParse(TxtY.Text.Trim(), out posY);
+                // 2. Leer coordenadas
+                // Validar que se haya seleccionado una posicion en el mapa
 
-                if (posX == 0 && posY == 0)
+                if (!_posXSeleccionada.HasValue || !_posYSeleccionada.HasValue) 
                 {
                     MessageBox.Show(
                         "Debe seleccionar una ubicación en el mapa.",
@@ -153,6 +137,8 @@ namespace InterfazGrafica.Vistas
                     );
                     return;
                 }
+                double posX = _posXSeleccionada.Value; // Coordenada X seleccionada
+                double posY = _posYSeleccionada.Value; // Coordenada Y seleccionada
 
                 // 3. Verificar que no exista otra persona con la misma cedula en el grafo
                 if (_grafo.Personas.Any(p => p.Cedula == cedula))
@@ -168,7 +154,7 @@ namespace InterfazGrafica.Vistas
                     return;
                 }
 
-                // 5. Crear el objeto Persona
+                // 5. Crear la instancia de Persona
                 var nuevaPersona = new Persona(
                     nombre: nombre,
                     cedula: cedula,
@@ -192,7 +178,7 @@ namespace InterfazGrafica.Vistas
                 // 6. Limpiar formulario 
                 LimpiarFormulario();
             }
-            catch (Exception ex)
+            catch (Exception ex) //Captura cualquier error que pueda ocurrir al guardar el familiar
             {
                 MessageBox.Show($"Ocurrió un error al guardar el familiar:\n{ex.Message}",
                                 "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -207,40 +193,36 @@ namespace InterfazGrafica.Vistas
             DpFechaNacimiento.SelectedDate = null;
             ChkNoEstaVivo.IsChecked = false;
             TxtAnoFallecimiento.Text = string.Empty;
-            TxtX.Text = string.Empty;
-            TxtY.Text = string.Empty;
+            _posXSeleccionada = null;
+            _posYSeleccionada = null;
             _rutaFotoSeleccionada = null;
             ImgFoto.Source = null;
         }
-
-
-
-        private void ChkNoEstaVivo_Checked(object sender, RoutedEventArgs e)
+        private void ChkNoEstaVivo_Checked(object sender, RoutedEventArgs e) //Checkbox para saber si el familiar esta vivo o no
         {
             TxtAnoFallecimiento.IsEnabled = true;
         }
 
-        private void ChkNoEstaVivo_Unchecked(object sender, RoutedEventArgs e)
+        private void ChkNoEstaVivo_Unchecked(object sender, RoutedEventArgs e) //Checkbox para saber si el familiar esta vivo o no
         {
             TxtAnoFallecimiento.IsEnabled = false;
             TxtAnoFallecimiento.Text = string.Empty;
         }
         private void BtnConectar_Click(object sender, RoutedEventArgs e) //Btn para conecta el familiar que se esta creando con uno de comboBox
         {
-            if (_ultimoFamiliarCreado == null)
+            if (_ultimoFamiliarCreado == null) // Verificar que haya un familiar creado para conectar
             {
                 MessageBox.Show("Primero debe agregar un familiar antes de conectarlo.",
                                 "Aviso", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
-            if (CmbFamiliares.SelectedItem is not Persona seleccionado)
+            if (CmbFamiliares.SelectedItem is not Persona seleccionado) // Verificar que se haya seleccionado un familiar del ComboBox
             {
                 MessageBox.Show("Seleccione un familiar en la lista para conectarlo.",
                                 "Aviso", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
-
             // Evitar conectarlo consigo mismo
             if (seleccionado.Id == _ultimoFamiliarCreado.Id)
             {
@@ -248,8 +230,8 @@ namespace InterfazGrafica.Vistas
                                 "Aviso", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
-
-            _grafo.AgregarRelacionBidireccional(_ultimoFamiliarCreado, seleccionado);
+            // Llamar al metodo AgregarRelacionBidireccional del grafo
+            _grafo.AgregarRelacionBidireccional(_ultimoFamiliarCreado, seleccionado); 
 
             MessageBox.Show($"Se ha conectado a {_ultimoFamiliarCreado.Nombre} con {seleccionado.Nombre}.",
                             "Conexión creada", MessageBoxButton.OK, MessageBoxImage.Information);

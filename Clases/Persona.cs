@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 namespace Clases
 {
@@ -18,12 +17,8 @@ namespace Clases
         public double PosY { get; set; }              // Coordenada Y para visualización
         public int? AnioFallecimiento { get; set; }   // Año de fallecimiento (null si esta vivo)
 
-        // Propiedad calculada: edad en años
-        public int Edad => (int)((DateTime.Now - FechaNacimiento).TotalDays / 365.25);
 
         // Constructor
-
-
         public Persona(string nombre, int cedula, DateTime fechaNacimiento, bool estaVivo,
                        string? rutaFoto = null, double posX = 0, double posY = 0, int? anioFallecimiento = null)
         {
@@ -60,11 +55,5 @@ namespace Clases
             PosY = posY;
             AnioFallecimiento = anioFallecimiento;
         }
-
-        public override string ToString()
-        {
-            return $"{Nombre} | Cédula: {Cedula} | Nacimiento: {FechaNacimiento:dd/MM/yyyy} | Vivo: {EstaVivo}";
-        }
     }
-
 }

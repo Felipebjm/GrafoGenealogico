@@ -1,15 +1,6 @@
 ﻿using Clases;
 using InterfazGrafica.Vistas;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace InterfazGrafica
 {
@@ -21,13 +12,13 @@ namespace InterfazGrafica
         {
             InitializeComponent();
 
-            // Al iniciar, se muestra la pantalla de agregar familiar
+            // Al iniciar, se muestra el user control de agregar familiar
             MainContent.Content = new Vistas.AgregarFamiliarControl(_grafo);
         }
 
+        // Boton para ir a la vista de agregar familiar
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            //Recordar pasar el grafo por parametro cuando exista
             MainContent.Content = new Vistas.AgregarFamiliarControl(_grafo);
         }
 
