@@ -1,19 +1,5 @@
 ﻿using Clases;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Clases;
 
 namespace InterfazGrafica.Vistas
 {
@@ -31,7 +17,7 @@ namespace InterfazGrafica.Vistas
         private void CalcularYMostrarEstadisticas()
         {
             Limpiar();
-            // Si no hay relaciones, no hay nada que mostrar
+            // Si no hay relaciones, muestra eso
             if (_grafo.Adyacencias.Count == 0)
             {
                 TxtPromedio.Text = "0";
@@ -42,14 +28,14 @@ namespace InterfazGrafica.Vistas
                 return;
             }
 
-            // Par más cercano
-            var (c1, c2, distCercana) = _grafo.ObtenerParMasCercano();
+            // Par mas cercano
+            var (c1, c2) = _grafo.ObtenerParMasCercano();
             SetParCercano(
                 c1?.Nombre ?? "N/A",
                 c2?.Nombre ?? "N/A"
             );
             // Par más lejano
-            var (l1, l2, distLejana) = _grafo.ObtenerParMasLejano();
+            var (l1, l2) = _grafo.ObtenerParMasLejano();
             SetParLejano(
                 l1?.Nombre ?? "N/A",
                 l2?.Nombre ?? "N/A"
@@ -73,7 +59,7 @@ namespace InterfazGrafica.Vistas
         /// Establece la distancia promedio entre familiares (como texto).
         public void SetDistanciaPromedio(string distanciaPromedio)
         {
-            TxtPromedio.Text = distanciaPromedio ?? string.Empty;
+            TxtPromedio.Text = (distanciaPromedio ?? string.Empty) + "km";
         }
         /// Limpia todos los campos (por si hiciera falta resetear).
         /// public void Limpiar()

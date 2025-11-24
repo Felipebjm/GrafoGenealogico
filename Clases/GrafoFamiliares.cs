@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Xml.Serialization;
 
 namespace Clases
 {
     public class GrafoPersonas
     {
-        //public Ob<Persona> Personas { get; private set; } = new(); // Lista de personas en el grafo
         public ObservableCollection<Persona> Personas { get; private set; } = new(); // Lista de personas en el grafo
 
         // Diccionario de adyacencias (relaciones) entre personas
@@ -20,7 +18,6 @@ namespace Clases
                 throw new ArgumentNullException(nameof(persona));
             if (Personas.Any(p => p.Cedula == persona.Cedula)) // Verificar si la persona ya existe por cedula
             {
-                Console.WriteLine("La persona con cedula " + persona.Cedula + " ya existe en el grafo.");
                 return;
             }
 
@@ -68,6 +65,7 @@ namespace Clases
         }
 
         //Retornar los familiares de una persona
+        
         public IEnumerable<Persona> ObtenerPersonasRelacionadas(Persona persona) //Enumerable para retornar una lista de personas relacionadas
         {
             if (persona == null) // Validar que la persona no sea nula
@@ -83,65 +81,91 @@ namespace Clases
                     yield return relacionada; // Retornar la persona relacionada
             }
         }
-        // Eliminar relacion bidireccional entre dos personas
-        public void EliminarRelacionBidereccional(Persona p1, Persona p2)
-        {
-            if (p1 == null || p2 == null)
-                return;
-            EliminarRelacion(p1.Id, p2.Id);
-            EliminarRelacion(p2.Id, p1.Id);
-        }
-
-        // Eliminar relacion unidireccional entre dos personas
-        public void EliminarRelacion(Guid id1, Guid id2)
-        {
-            if (Adyacencias.TryGetValue(id1, out var lista)) // Obtener la lista de adyacencias
-            {
-                lista.Remove(id2);
-            }
-        }
-
         
-
-        // Calcular la distancia euclidiana entre una persona y sus vecinos
-        // El resultado es una lista de tuplas (Persona vecino, double distancia)
-        public List<(Persona persona, double distancia)> CalcularDistanciasConVecinos(Persona origen)
+        // Implementacion del algoritmo de Dijkstra para calcular distancias  desde una persona origen a los otros nodo
+        // Retorna un diccionario con las distancias y el nodo previo en el camino mas corto
+        public Dictionary<Guid, (double distancia, Guid? previo)> CalcularDistancia(Persona origen)
         {
-            if (origen == null) // Validar que la persona no sea nula
+            if (origen == null)
                 throw new ArgumentNullException(nameof(origen));
 
-            var resultado = new List<(Persona persona, double distancia)>(); // Lista para almacenar los resultados
+            // Diccionario de distancias: IdPersona -> (distancia acumulada, Id previo en el camino)
+            var distancias = new Dictionary<Guid, (double distancia, Guid? previo)>();
 
-            // Verificar que la persona tenga lista de adyacencias
-            //Busca en el diccionario el Id de origen y que tenga vecinos
-            if (!Adyacencias.TryGetValue(origen.Id, out var vecinosIds) || vecinosIds.Count == 0)
-                return resultado; // Lista vacia: no tiene conexiones
-
-            foreach (var idVecino in vecinosIds) // Recorrer los ids de los vecinos
+            // Inicializar con infinito
+            foreach (var p in Personas)
             {
-                //Buscar al vecino por id
-                var vecino = Personas.FirstOrDefault(p => p.Id == idVecino);
-                if (vecino == null)
+                distancias[p.Id] = (double.PositiveInfinity, null);
+            }
+
+            // Distancia a si mismo = 0
+            distancias[origen.Id] = (0, null);
+            // Conjunto de nodos visitados
+            var visitados = new HashSet<Guid>();
+
+            // Bucle principal de Dijkstra 
+            while (true)
+            {
+                // 1. Elegir el nodo no visitado con menor distancia conocida
+                Guid? actualId = null;
+                double mejorDist = double.PositiveInfinity;
+
+                foreach (var kvp in distancias)
+                {
+                    var id = kvp.Key;
+                    var (dist, _) = kvp.Value;
+
+                    if (!visitados.Contains(id) && dist < mejorDist)
+                    {
+                        mejorDist = dist;
+                        actualId = id;
+                    }
+                }
+
+                // Si no hay mas alcanzables se terminamos
+                if (actualId == null)
+                    break;
+
+                visitados.Add(actualId.Value);
+
+                // 2. Relajar las aristas salientes desde actualId
+                if (!Adyacencias.TryGetValue(actualId.Value, out var vecinos))
                     continue;
 
-                //Calcular la distancia euclidiana entre origen y vecino
-                double dx = vecino.PosX - origen.PosX;
-                double dy = vecino.PosY - origen.PosY;
-                double distancia = Math.Sqrt(dx * dx + dy * dy);
+                var personaActual = BuscarPersonaPorId(actualId.Value);
+                if (personaActual == null)
+                    continue;
 
-                resultado.Add((vecino, distancia));
-            }            
+                foreach (var vecinoId in vecinos)
+                {
+                    var vecino = BuscarPersonaPorId(vecinoId);
+                    if (vecino == null)
+                        continue;
 
-            return resultado;
+                    // Peso de la arista = distancia euclidiana entre personaActual y vecino
+                    double dx = vecino.PosX - personaActual.PosX;
+                    double dy = vecino.PosY - personaActual.PosY;
+                    double peso = Math.Sqrt(dx * dx + dy * dy);
+
+                    double nuevaDist = mejorDist + peso;
+
+                    var (distActualVecino, _) = distancias[vecinoId];
+                    if (nuevaDist < distActualVecino)
+                    {
+                        distancias[vecinoId] = (nuevaDist, actualId.Value);
+                    }
+                }
+            }
+            return distancias;
         }
 
         // Devuelve el par de familiares  que estan mas lejos uno del otro
         // Solo se consideran pares que tengan una relación en el grafo 
-        public (Persona? persona1, Persona? persona2, double distancia) ObtenerParMasLejano()
+        public (Persona? persona1, Persona? persona2) ObtenerParMasLejano()
         {
             // Si no hay relaciones, no hay nada que calcular
             if (Adyacencias.Count == 0)
-                return (null, null, 0);
+                return (null, null);
             // Variables para rastrear el mejor par encontrado
             Persona? mejor1 = null; 
             Persona? mejor2 = null;
@@ -195,16 +219,16 @@ namespace Clases
                 }
             }
             if (mejor1 == null || mejor2 == null)
-                return (null, null, 0);
-            return (mejor1, mejor2, maxDistancia);
+                return (null, null);
+            return (mejor1, mejor2);
         }
 
         // Devuelve el par de familiares  que estan mas cerca uno del otro
-        public (Persona? persona1, Persona? persona2, double distancia) ObtenerParMasCercano()
+        public (Persona? persona1, Persona? persona2) ObtenerParMasCercano()
         {
             // Si no hay relaciones, no hay nada que calcular
             if (Adyacencias.Count == 0)
-                return (null, null, 0);
+                return (null, null);
 
             Persona? mejor1 = null;
             Persona? mejor2 = null;
@@ -251,8 +275,8 @@ namespace Clases
             }
             // Si nunca encontro un par valido regresa distancia 0 y nulls
             if (mejor1 == null || mejor2 == null)
-                        return (null, null, 0);
-            return (mejor1, mejor2, minDistancia);
+                        return (null, null);
+            return (mejor1, mejor2);
         }
 
         public double CalcularDistanciaPromedio()
@@ -301,29 +325,6 @@ namespace Clases
             if (cantidadPares == 0)
                 return 0;
             return sumaDistancias/cantidadPares; // Retornar la distancia promedio
-        }
-
-        public void MostrarGrafo()
-        {
-            Console.WriteLine("\nRelaciones en el grafo:\n");
-            foreach (var persona in Personas)
-            {
-                Console.WriteLine($"{persona.Nombre}:");
-                if (Adyacencias.TryGetValue(persona.Id, out var lista))
-                {
-                    foreach (var idRelacionado in lista)
-                    {
-                        Persona? relacionada = Personas.FirstOrDefault(p => p.Id == idRelacionado);
-                        if (relacionada != null)
-                        {
-                            Console.WriteLine($"   → {relacionada.Nombre}");
-                        }
-                    }
-                }
-                Console.WriteLine();
-
-            }
-
         }
     }
 }

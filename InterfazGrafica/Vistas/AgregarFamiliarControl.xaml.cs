@@ -1,18 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Clases;
 using Microsoft.Win32; //Necesario para el OpenFileDialog
 using System.IO;
@@ -21,11 +9,11 @@ namespace InterfazGrafica.Vistas
 {
     public partial class AgregarFamiliarControl : UserControl
     {
-        // Mas adelante hay que pasar el grafo por parametro
-        // private GrafoFamilia _grafo;
+        // Mas adelante hay que pasar el grafo por parametro;
         private readonly GrafoPersonas _grafo;
         private string? _rutaFotoSeleccionada;
-        public string? RutaFotoSeleccionada => _rutaFotoSeleccionada;
+        private double? _posXSeleccionada;
+        private double? _posYSeleccionada;
 
         private Persona? _ultimoFamiliarCreado; //Para saber cual fue el ultimo creado
         public AgregarFamiliarControl(GrafoPersonas grafo)
@@ -47,8 +35,8 @@ namespace InterfazGrafica.Vistas
             if (resultado == true)
             {
                 // Guardar las coordenadas en los TextBox
-                TxtX.Text = mapaWindow.CoordenadaX.ToString("0"); // sin decimales
-                TxtY.Text = mapaWindow.CoordenadaY.ToString("0");
+                _posXSeleccionada = mapaWindow.CoordenadaX; // sin decimales
+                _posYSeleccionada = mapaWindow.CoordenadaY;
             }
         }
 
@@ -138,12 +126,9 @@ namespace InterfazGrafica.Vistas
                 }
 
                 // 2. Leer coordenadas 
-                double posX = 0; // Inicializar en 0 por defecto
-                double posY = 0;
-                double.TryParse(TxtX.Text.Trim(), out posX); //Si el usuario ingreso coordenadas, intentar parsearlas
-                double.TryParse(TxtY.Text.Trim(), out posY);
+                
 
-                if (posX == 0 && posY == 0)
+                if (!_posXSeleccionada.HasValue || !_posYSeleccionada.HasValue)
                 {
                     MessageBox.Show(
                         "Debe seleccionar una ubicación en el mapa.",
@@ -153,6 +138,8 @@ namespace InterfazGrafica.Vistas
                     );
                     return;
                 }
+                double posX = _posXSeleccionada.Value;
+                double posY = _posYSeleccionada.Value;
 
                 // 3. Verificar que no exista otra persona con la misma cedula en el grafo
                 if (_grafo.Personas.Any(p => p.Cedula == cedula))
@@ -207,20 +194,17 @@ namespace InterfazGrafica.Vistas
             DpFechaNacimiento.SelectedDate = null;
             ChkNoEstaVivo.IsChecked = false;
             TxtAnoFallecimiento.Text = string.Empty;
-            TxtX.Text = string.Empty;
-            TxtY.Text = string.Empty;
+            _posXSeleccionada = null;
+            _posYSeleccionada = null;
             _rutaFotoSeleccionada = null;
             ImgFoto.Source = null;
         }
-
-
-
-        private void ChkNoEstaVivo_Checked(object sender, RoutedEventArgs e)
+        private void ChkNoEstaVivo_Checked(object sender, RoutedEventArgs e) //Checkbox para saber si el familiar esta vivo o no
         {
             TxtAnoFallecimiento.IsEnabled = true;
         }
 
-        private void ChkNoEstaVivo_Unchecked(object sender, RoutedEventArgs e)
+        private void ChkNoEstaVivo_Unchecked(object sender, RoutedEventArgs e) //Checkbox para saber si el familiar esta vivo o no
         {
             TxtAnoFallecimiento.IsEnabled = false;
             TxtAnoFallecimiento.Text = string.Empty;

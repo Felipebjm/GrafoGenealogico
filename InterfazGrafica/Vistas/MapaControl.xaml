@@ -17,19 +17,12 @@
 
         <!-- Encabezado (los margenes minimos) -->
         <DockPanel Grid.Row="0" Background="#E5E7EB" LastChildFill="False">
-            <TextBlock Text="No olvides refrescar al añadir a alguien!"
-                       VerticalAlignment="Center"
+            <TextBlock Text="Mapa del mundo"
                        Margin="10,0,0,0"
                        FontWeight="Bold"
-                       DockPanel.Dock="Left" FontSize="14"/>
+                       DockPanel.Dock="Left" FontSize="20" Height="31" Width="163"/>
 
-            <!-- Boton de REFRESCAR solo notifica a la capa superior de redibujar -->
-            <Button x:Name="BtnRefrescar"
-                    Content="Refrescar"
-                    Margin="0,5,8,5"
-                    Padding="12,4"
-                    DockPanel.Dock="Right"
-                    Click="BtnRefrescar_Click" FontSize="14"/>
+            
         </DockPanel>
 
         <!-- Contenido: imagen de fondo + capa de dibujo encima -->
